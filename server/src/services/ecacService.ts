@@ -76,44 +76,9 @@ export class EcacService {
 
             try {
                 // 1. Acesso pela porta da frente
-                console.log("[EcacService] Navegando para e-CAC Home...");
-                // Avoid networkidle as e-CAC often has tracking scripts that never finish
-                await page.goto('https://cav.receita.fazenda.gov.br/autenticacao/login', { waitUntil: 'domcontentloaded' });
-
-                // 2. Clicar no botão 'Entrar com gov.br'
-                console.log("[EcacService] Procurando botão Entrar com gov.br...");
-                await page.waitForFunction(() => {
-                    const btnNovo = document.querySelector('input[type="image"][src*="gov-br.png"]');
-                    if (btnNovo) {
-                        (btnNovo as HTMLElement).click();
-                        return true;
-                    }
-
-                    const imgs = Array.from(document.querySelectorAll('img, input[type="image"]'));
-                    const govImg = imgs.find(img => {
-                        const src = (img.getAttribute('src') || '').toLowerCase();
-                        const alt = (img.getAttribute('alt') || '').toLowerCase();
-                        return src.includes('gov-br') || src.includes('govbr') || alt.includes('gov br') || alt.includes('gov.br');
-                    });
-
-                    if (govImg) {
-                        const parentA = govImg.closest('a');
-                        if (parentA) {
-                            (parentA as HTMLElement).click();
-                        } else {
-                            (govImg as HTMLElement).click();
-                        }
-                        return true;
-                    }
-
-                    const links = Array.from(document.querySelectorAll('a, button'));
-                    const authLink = links.find(a => ((a as HTMLElement).innerText || '').toLowerCase().includes('entrar com gov.br') || (a.getAttribute('href') || '').includes('govbrsso'));
-                    if (authLink) {
-                        (authLink as HTMLElement).click();
-                        return true;
-                    }
-                    return false;
-                }, { timeout: 25000 });
+                // 1. Acesso direto (Bypass) ao Gateway SSO do Gov.Br
+                console.log("[EcacService] Iniciando fluxo direto de Autenticação OAuth2 Gov.Br...");
+                await page.goto('https://sso.acesso.gov.br/authorize?response_type=code&client_id=cav.receita.fazenda.gov.br&scope=openid+govbr_confiabilidades&redirect_uri=https://cav.receita.fazenda.gov.br/autenticacao/login/LogarGovBr&state=Y2F2', { waitUntil: 'domcontentloaded' });
 
                 console.log("[EcacService] Aguardando tela do Gov.br...");
 
