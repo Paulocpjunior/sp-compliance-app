@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle, Download, Building2, Calendar, FileText } from 'lucide-react';
-import { FiscalIssue } from '../TaxParser';
+import { FiscalIssue } from '../types/TaxParser';
 
 interface CND {
     orgao: string;

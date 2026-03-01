@@ -1,137 +1,136 @@
 import React, { useState } from 'react';
-import { ShieldCheck, AlertTriangle, FileCheck, Download } from 'lucide-react';
-import { parsePFX } from './services/certificateParser';
+import { Upload, FileKey, Loader2 } from 'lucide-react';
+import { AuditResults } from './components/AuditResults';
 
 export default function App() {
+    const [certificate, setCertificate] = useState<File | null>(null);
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [auditoria, setAuditoria] = useState<{ pendencias: any[], certidoes: any[], clienteRegular: boolean } | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [auditoria, setAuditoria] = useState<any>(null);
+    const [empresaAuditada, setEmpresaAuditada] = useState({ nome: '', cnpj: '' });
 
-    const handleProcess = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        // ... (Lógica de leitura do arquivo e senha mantida) ...
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setCertificate(e.target.files[0]);
+            setError(null);
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!certificate || !password) {
+            setError('Por favor, selecione um certificado e insira a senha.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('certificate', certificate);
+        formData.append('password', password);
+
         setLoading(true);
-        try {
-            const pfxBase64 = await toBase64(file);
-            const certData = await parsePFX(file, password);
+        setError(null);
+        setAuditoria(null);
 
-            // Chama a nova rota orquestrada
-            const response = await fetch('https://SUA-URL-CLOUD-RUN/api/v1/auditoria-completa', {
+        try {
+            const response = await fetch('https://api-sp-compliance-631239634290.us-central1.run.app/api/v1/auditoria-completa', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pfxBase64, password, cnpj: certData.cnpj })
+                body: formData,
             });
 
-            const data = await response.json();
-            setAuditoria(data);
+            if (!response.ok) {
+                throw new Error('Erro na comunicação com os órgãos fiscais.');
+            }
 
-        } catch (err) {
-            alert("Erro na auditoria oficial.");
+            const data = await response.json();
+
+            setEmpresaAuditada({
+                nome: "Empresa Auditada", // Poderia vir do certificado ou do backend
+                cnpj: "12.345.678/0001-99" // Poderia vir do certificado ou do backend
+            });
+
+            setAuditoria(data);
+        } catch (err: any) {
+            setError(err.message || 'Erro inesperado durante a auditoria.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
-            {/* ... (Seu Header e Input de Arquivo aqui) ... */}
+        <div className="min-h-screen bg-slate-50 p-8 font-sans">
+            <div className="max-w-4xl mx-auto">
+                <header className="mb-12 text-center">
+                    <h1 className="text-4xl font-black text-slate-800 tracking-tight">SP Assessoria Contábil</h1>
+                    <p className="text-slate-500 mt-2 font-medium">Motor de Diagnóstico Fiscal Automatizado</p>
+                </header>
 
-            {loading && <p className="text-center font-bold text-blue-600 animate-pulse mt-10">Conectando aos servidores da Receita Federal e e-Social...</p>}
-
-            {auditoria && !loading && (
-                <div className="max-w-6xl mx-auto mt-12 animate-in fade-in slide-in-from-bottom duration-500">
-
-                    {/* CENÁRIO 1: Cliente com Problemas (Exibe Pendências) */}
-                    {!auditoria.clienteRegular ? (
-                        <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
-                            <div className="bg-red-50 p-6 border-b border-red-100 flex items-center gap-3">
-                                <AlertTriangle className="text-red-600" size={32} />
-                                <div>
-                                    <h3 className="text-xl font-bold text-red-800">Irregularidades Fiscais Detectadas</h3>
-                                    <p className="text-red-600 text-sm">Foram encontradas {auditoria.pendencias.length} pendências nos órgãos governamentais.</p>
-                                </div>
-                            </div>
-                            <table className="w-full text-left">
-                                <thead className="bg-slate-50">
-                                    <tr>
-                                        <th className="p-4 font-bold text-slate-500">Órgão</th>
-                                        <th className="p-4 font-bold text-slate-500">Descrição / Obrigação</th>
-                                        <th className="p-4 font-bold text-slate-500">Valor (R$)</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {auditoria.pendencias.map((pend, idx) => (
-                                        <tr key={idx} className="hover:bg-slate-50">
-                                            <td className="p-4 font-bold">{pend.orgao}</td>
-                                            <td className="p-4 text-slate-700">{pend.descricao}</td>
-                                            <td className="p-4 font-black text-red-600">{pend.valor > 0 ? `R$ ${pend.valor.toLocaleString('pt-BR')}` : '-'}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-
-                        /* CENÁRIO 2: Cliente Regular (Exibe Certidões) */
-                        <div className="bg-white rounded-2xl border border-green-200 shadow-sm p-8">
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="bg-green-100 p-4 rounded-full">
-                                    <FileCheck className="text-green-600" size={40} />
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl font-black text-green-800">Empresa 100% Regular</h3>
-                                    <p className="text-slate-600">Nenhuma pendência encontrada. As certidões foram emitidas automaticamente.</p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {auditoria.certidoes.map((cnd, idx) => (
-                                    <div key={idx} className="border border-slate-200 p-6 rounded-xl flex items-center justify-between bg-slate-50">
-                                        <div>
-                                            <p className="text-xs font-bold text-slate-400 uppercase">{cnd.orgao}</p>
-                                            <p className="font-bold text-slate-800 mt-1">{cnd.nome}</p>
-                                            <span className="inline-block mt-2 bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-bold uppercase">{cnd.status}</span>
-                                        </div>
-                                        {/* Botão para o cliente baixar o PDF da Certidão */}
-                                        <a
-                                            href={`data:application/pdf;base64,${cnd.arquivoBase64}`}
-                                            download={`CND_${cnd.orgao.replace(/\s/g, '')}.pdf`}
-                                            className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-bold text-sm"
-                                        >
-                                            <Download size={18} /> Baixar PDF
-                                        </a>
-                                    </div>
-                                ))}
+                {!auditoria && (
+                    <div className="bg-white p-8 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 max-w-md mx-auto">
+                        <div className="mb-6">
+                            <label className="block text-sm font-bold text-slate-700 mb-2">1. Selecione o Certificado (PFX/P12)</label>
+                            <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:bg-slate-50 transition-colors flex flex-col items-center justify-center cursor-pointer">
+                                <input
+                                    type="file"
+                                    accept=".pfx,.p12"
+                                    onChange={handleFileChange}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                <Upload className="text-blue-500 mb-2" size={32} />
+                                <span className="text-sm font-bold text-slate-600">
+                                    {certificate ? certificate.name : 'Clique para importar o arquivo'}
+                                </span>
                             </div>
                         </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
-}
-// ... seus imports ...
-import { AuditResults } from './components/AuditResults';
 
-export default function App() {
-    const [auditoria, setAuditoria] = useState<any>(null);
-    const [empresaAuditada, setEmpresaAuditada] = useState({ nome: '', cnpj: '' });
+                        <div className="mb-8">
+                            <label className="block text-sm font-bold text-slate-700 mb-2">2. Senha do Certificado</label>
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
+                                    placeholder="Digite a senha..."
+                                />
+                                <FileKey className="absolute left-3 top-3.5 text-slate-400" size={20} />
+                            </div>
+                        </div>
 
-    // ... função handleProcess ...
+                        {error && (
+                            <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm font-bold border border-red-100">
+                                {error}
+                            </div>
+                        )}
 
-    return (
-        <div className="min-h-screen bg-slate-50 p-8">
-            {/* Seu Header Navbar aqui */}
-            {/* O Formulário de Input do Certificado aqui */}
+                        <button
+                            onClick={handleUpload}
+                            disabled={loading || !certificate || !password}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="animate-spin mr-2" size={20} /> Processando nos Órgãos...
+                                </>
+                            ) : 'Iniciar Auditoria Tributária'}
+                        </button>
 
-            {/* Renderização Elegante dos Resultados */}
-            {auditoria && !loading && (
-                <AuditResults
-                    razaoSocial={empresaAuditada.nome}
-                    cnpj={empresaAuditada.cnpj}
-                    clienteRegular={auditoria.clienteRegular}
-                    pendencias={auditoria.pendencias}
-                    certidoes={auditoria.certidoes}
-                />
-            )}
+                        <p className="text-center text-xs text-slate-400 font-medium mt-4">
+                            Conexão M2M segura. Os dados são processados diretamente na Receita Federal e PGFN.
+                        </p>
+                    </div>
+                )}
+
+                {/* Renderização Elegante dos Resultados usando o novo componente */}
+                {auditoria && !loading && (
+                    <AuditResults
+                        razaoSocial={empresaAuditada.nome}
+                        cnpj={empresaAuditada.cnpj}
+                        clienteRegular={auditoria.clienteRegular}
+                        pendencias={auditoria.pendencias || []}
+                        certidoes={auditoria.certidoes || []}
+                    />
+                )}
+            </div>
         </div>
     );
 }

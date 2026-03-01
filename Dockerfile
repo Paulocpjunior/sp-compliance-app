@@ -1,17 +1,12 @@
-# Estágio 1: Build (Transforma o código TypeScript em arquivos que o navegador entende)
-FROM node:18-slim AS build
+FROM node:18-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 RUN npm run build
 
-# Estágio 2: Serve (Roda a aplicação no Cloud Run)
-FROM node:18-slim
-WORKDIR /app
-RUN npm install -g serve
-COPY --from=build /app/dist ./dist
-
-# Porta padrão do Cloud Run
-EXPOSE 8080
-CMD ["serve", "-s", "dist", "-l", "8080"]
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+# Include custom nginx config if we had routing issues
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
