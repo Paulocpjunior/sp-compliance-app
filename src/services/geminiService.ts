@@ -2,14 +2,15 @@ import { GoogleGenAI } from "@google/genai";
 import { ParsedCertificate } from '../types';
 
 export const analyzeCompliance = async (cert: ParsedCertificate): Promise<string> => {
-  if (!process.env.API_KEY) {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
     console.warn("API Key not found, skipping AI analysis.");
     return "Análise de IA indisponível: Chave de API ausente.";
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    
+    const ai = new GoogleGenAI({ apiKey: apiKey });
+
     const prompt = `
       Você é um Auditor Sênior de Compliance para Certificados Digitais Brasileiros (ICP-Brasil).
       Analise os dados extraídos do certificado a seguir e forneça um resumo de compliance breve e profissional.

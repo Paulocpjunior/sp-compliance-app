@@ -1,0 +1,580 @@
+2026-02-28T14:47:05.433Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T14:47:05.500Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T14:47:05.747Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T14:47:05.782Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T14:47:05.901Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T14:47:05.906Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T14:47:50.027Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.027Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.027Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.555Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.555Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.555Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T14:47:50.939Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T14:47:50.940Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T14:47:51.883Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:08:42.040Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:08:42.057Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:08:42.072Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T15:08:42.122Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:08:42.393Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:08:42.429Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:09:26.235Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:09:26.235Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:09:26.236Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:09:27.333Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:09:27.334Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:09:28.378Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:18:36.405Z 
+[PGFN DOM LOG]: Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://unpkg.com/ionicons@4.5.10-0/dist/fonts/ionicons.woff2?v=4.5.9-1
+2026-02-28T15:18:36.444Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:18:36.524Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T15:18:38.214Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:18:38.286Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:18:38.446Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:18:38.570Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:19:19.273Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:19:19.274Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:19:19.274Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:19:20.241Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:19:20.241Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:19:21.182Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:24:08.689Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:24:08.760Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:24:08.762Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:24:08.781Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T15:24:08.782Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T15:24:08.782Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T15:24:09.096Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:24:09.135Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:24:52.903Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:24:52.904Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:24:52.904Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:24:53.828Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:24:53.829Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:24:54.850Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:49:59.961Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T15:49:59.986Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:50:00.068Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:50:00.339Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:50:00.385Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:50:01.431Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:50:01.454Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T15:50:01.455Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T15:50:01.455Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T15:50:45.322Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:45.322Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:45.322Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:45.813Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:45.813Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:45.813Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:50:46.203Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:50:46.204Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:50:47.080Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:55:32.045Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T15:55:32.147Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:55:32.219Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:55:32.584Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:55:32.628Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:55:33.152Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:55:33.166Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T15:56:16.972Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:16.972Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:16.972Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:17.422Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:17.422Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:17.422Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:56:17.739Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:56:17.739Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:56:19.703Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T15:57:06.493Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T15:57:06.565Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:57:06.578Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T15:57:06.598Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T15:57:06.599Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T15:57:06.599Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T15:57:06.811Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:57:06.836Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T15:57:06.860Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T15:57:50.539Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:50.539Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:50.539Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:51.063Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:51.063Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:51.064Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T15:57:51.421Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T15:57:51.421Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T15:57:52.377Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T16:02:01.310Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T16:02:01.442Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:02:01.450Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T16:02:01.766Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:02:01.818Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:02:01.964Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T16:02:01.994Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T16:02:01.995Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T16:02:01.995Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T16:02:46.087Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:02:46.088Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:02:46.089Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:02:46.824Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T16:02:46.825Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T16:02:47.714Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T16:06:40.113Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T16:06:40.184Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:06:40.273Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T16:06:40.597Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:06:40.671Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:06:41.105Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T16:06:41.145Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T16:07:25.022Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.022Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.022Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.440Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.440Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.441Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:07:25.708Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T16:07:25.709Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T16:07:26.609Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T16:32:03.418Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T16:32:03.553Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:32:03.772Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T16:32:03.796Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:32:03.830Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:32:04.144Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T16:32:04.224Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T16:32:47.948Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:47.948Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:47.949Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:48.438Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:48.438Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:48.438Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:32:48.982Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T16:32:48.983Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T16:32:50.039Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T16:39:48.769Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T16:39:49.431Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T16:39:49.502Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:39:49.759Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T16:39:49.795Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T16:39:49.899Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:39:49.940Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:40:33.432Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:40:33.432Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:40:33.432Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:40:34.567Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T16:40:34.567Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T16:40:35.622Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T16:52:01.785Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T16:52:01.856Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:52:02.055Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T16:52:02.179Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:52:02.215Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T16:52:02.387Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T16:52:02.403Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T16:52:46.513Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:46.514Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:46.514Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:46.996Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:46.997Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:46.997Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T16:52:47.579Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T16:52:47.579Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T16:52:48.619Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T17:26:50.778Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T17:26:50.852Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:26:50.960Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T17:26:51.080Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:26:51.116Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:26:51.351Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T17:26:51.370Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T17:27:35.237Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:35.238Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:35.238Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:35.708Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:35.708Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:35.708Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:27:36.255Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T17:27:36.255Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T17:27:37.298Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T17:29:43.953Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T17:29:43.992Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T17:29:44.028Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:29:44.364Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:29:44.408Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:29:44.585Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T17:29:44.603Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T17:30:29.252Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:29.253Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:29.253Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:30.552Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:30.552Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:30.552Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:30:31.249Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T17:30:31.249Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T17:30:32.152Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T17:34:41.916Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T17:34:42.543Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T17:34:42.699Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:34:42.794Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T17:34:42.856Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T17:34:42.975Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:34:43.013Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:35:26.517Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:35:26.517Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:35:26.518Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:35:26.994Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:35:27.495Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T17:35:27.495Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T17:35:28.457Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T17:37:44.757Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T17:37:44.767Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T17:37:44.840Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:37:45.152Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:37:45.185Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:37:45.247Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T17:37:45.312Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T17:37:45.312Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T17:37:45.312Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T17:38:28.947Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:38:28.948Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:38:28.948Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:38:29.782Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T17:38:29.783Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T17:38:30.759Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T17:52:19.455Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T17:52:20.276Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T17:52:20.352Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:52:20.441Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T17:52:20.499Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 500 ()
+2026-02-28T17:52:20.500Z 
+[PGFN DOM LOG]: Erro ao obter a configuração de horário de expiração da sessão: c_
+2026-02-28T17:52:20.500Z 
+[PGFN DOM LOG]: Hora de expiração da sessão mantida para: 22:00
+2026-02-28T17:52:20.564Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:52:20.601Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T17:53:04.299Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:04.299Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:04.300Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:04.693Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:04.693Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:04.693Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T17:53:05.248Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T17:53:05.248Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T17:53:06.283Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-02-28T18:07:21.095Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-02-28T18:07:21.136Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-02-28T18:07:21.166Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T18:07:21.526Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T18:07:21.576Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-02-28T18:07:22.351Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-02-28T18:07:22.454Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-02-28T18:08:05.752Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/lula-e-waldez-vistoriam-municipios-mineiros-afetados-e-se-reunem-com-prefeitos/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T18:08:05.753Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-condena-os-ataques-dos-estados-unidos-e-de-israel-ao-ira/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T18:08:05.753Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/na-colombia-brasil-destaca-integracao-entre-reforma-agraria-e-sistemas-alimentares-resilientes/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-02-28T18:08:06.731Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-02-28T18:08:06.732Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-02-28T18:08:07.595Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+2026-03-01T12:08:17.143Z 
+[e-CAC DOM LOG]: recaptchacompat disabled
+2026-03-01T12:08:17.224Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-03-01T12:08:17.283Z 
+[e-Social DOM LOG]: Failed to load resource: the server responded with a status of 404 ()
+2026-03-01T12:08:17.589Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-03-01T12:08:17.633Z 
+[e-CAC DOM LOG]: Failed to load resource: the server responded with a status of 404 (Not Found)
+2026-03-01T12:08:17.777Z 
+[PGFN DOM LOG]: [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o
+2026-03-01T12:08:17.778Z 
+[PGFN DOM LOG]: Hora de expiração da sessão atualizada para: 22:00
+2026-03-01T12:09:01.827Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/201cgoverno-federal-vai-repetir-o-mesmo-que-fizemos-com-a-tragedia-do-rio-grande-do-sul201d-diz-lula-durante-visita-a-minas-gerais/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:01.828Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/alckmin-bomba-nas-redes-2018nao-vai-ter-aumento-de-imposto-para-celular-nem-notebook/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:01.828Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-libera-r-16-4-milhoes-para-reforcar-assistencia-a-saude-nos-municipios-atingidos-pelas-chuvas-na-zona-da-mata/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:02.391Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/201cgoverno-federal-vai-repetir-o-mesmo-que-fizemos-com-a-tragedia-do-rio-grande-do-sul201d-diz-lula-durante-visita-a-minas-gerais/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:02.391Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/alckmin-bomba-nas-redes-2018nao-vai-ter-aumento-de-imposto-para-celular-nem-notebook/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:02.391Z 
+[PGFN DOM LOG]: Mixed Content: The page at 'https://www.gov.br/pt-br' was loaded over HTTPS, but requested an insecure element 'http://agenciagov.ebc.com.br/noticias/202602/governo-do-brasil-libera-r-16-4-milhoes-para-reforcar-assistencia-a-saude-nos-municipios-atingidos-pelas-chuvas-na-zona-da-mata/@@images/image/large'. This request was automatically upgraded to HTTPS, For more information see https://blog.chromium.org/2019/10/no-more-mixed-messages-about-https.html
+2026-03-01T12:09:02.893Z 
+[PGFN DOM LOG]: The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet)
+2026-03-01T12:09:02.893Z 
+[PGFN DOM LOG]: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+2026-03-01T12:09:03.790Z 
+[PGFN DOM LOG]: Failed to load resource: the server responded with a status of 401 (Unauthorized)
