@@ -83,21 +83,37 @@ export class EcacService {
                 // 2. Clicar no botão 'Entrar com gov.br'
                 console.log("[EcacService] Procurando botão Entrar com gov.br...");
                 await page.waitForFunction(() => {
-                    const imgs = Array.from(document.querySelectorAll('img'));
-                    const govImg = imgs.find(img => img.src.includes('govbr.png') || (img.alt && img.alt.toLowerCase().includes('gov.br')));
-                    if (govImg && govImg.closest('a')) {
-                        (govImg.closest('a') as HTMLElement).click();
+                    const btnNovo = document.querySelector('input[type="image"][src*="gov-br.png"]');
+                    if (btnNovo) {
+                        (btnNovo as HTMLElement).click();
                         return true;
                     }
 
-                    const links = Array.from(document.querySelectorAll('a'));
-                    const authLink = links.find(a => a.innerText.toLowerCase().includes('entrar com gov.br') || a.href.includes('govbrsso'));
+                    const imgs = Array.from(document.querySelectorAll('img, input[type="image"]'));
+                    const govImg = imgs.find(img => {
+                        const src = (img.getAttribute('src') || '').toLowerCase();
+                        const alt = (img.getAttribute('alt') || '').toLowerCase();
+                        return src.includes('gov-br') || src.includes('govbr') || alt.includes('gov br') || alt.includes('gov.br');
+                    });
+
+                    if (govImg) {
+                        const parentA = govImg.closest('a');
+                        if (parentA) {
+                            (parentA as HTMLElement).click();
+                        } else {
+                            (govImg as HTMLElement).click();
+                        }
+                        return true;
+                    }
+
+                    const links = Array.from(document.querySelectorAll('a, button'));
+                    const authLink = links.find(a => ((a as HTMLElement).innerText || '').toLowerCase().includes('entrar com gov.br') || (a.getAttribute('href') || '').includes('govbrsso'));
                     if (authLink) {
                         (authLink as HTMLElement).click();
                         return true;
                     }
                     return false;
-                }, { timeout: 15000 });
+                }, { timeout: 25000 });
 
                 console.log("[EcacService] Aguardando tela do Gov.br...");
 
