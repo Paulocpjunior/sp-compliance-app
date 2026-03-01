@@ -32,7 +32,7 @@ export default function App() {
         setAuditoria(null);
 
         try {
-            const response = await fetch('https://api-sp-compliance-631239634290.us-central1.run.app/api/v1/auditoria-completa', {
+            const response = await fetch('https://api-sp-compliance-631239634290.southamerica-east1.run.app/api/v1/auditoria-completa', {
                 method: 'POST',
                 body: formData,
             });
