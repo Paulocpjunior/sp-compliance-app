@@ -13,3 +13,11 @@ root.render(
     <App />
   </React.StrictMode>
 );
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Se o fundo da página estiver estranho, garanta isso aqui: */
+body {
+  @apply bg - slate - 50 text - slate - 900;
+}
