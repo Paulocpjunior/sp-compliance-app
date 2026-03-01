@@ -20,22 +20,27 @@ export class EcacService {
             // MAGIC FIX: Chromium's BoringSSL cannot read legacy RC2 e-CNPJ files.
             // We use the OS's OpenSSL to convert the legacy .pfx into a modern .pfx (AES-256)
             let finalPfxPath = pfxPath;
-            if (process.platform === 'darwin') {
-                try {
-                    console.log("[EcacService] Convertendo formato legado do Certificado para AES-256 (BoringSSL)...");
-                    const pemPath = pfxPath + '.pem';
-                    const modernPfxPath = pfxPath + '.modern.pfx';
-                    // Extract to PEM using -legacy
-                    const { execSync } = require('child_process');
-                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`);
-                    // Repackage to AES-256 PFX
-                    execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`);
+            try {
+                console.log("[EcacService] Convertendo formato do Certificado para AES-256 (BoringSSL)...");
+                const pemPath = pfxPath + '.pem';
+                const modernPfxPath = pfxPath + '.modern.pfx';
+                const { execSync } = require('child_process');
 
-                    finalPfxPath = modernPfxPath; // Tell Playwright to use the modern one
-                } catch (sslErr: any) {
-                    console.error("[EcacService] Erro ao converter certificado:", sslErr.message);
-                    // Fallback to original and pray
+                try {
+                    // Tenta usar a flag -legacy (OpenSSL 3.x)
+                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`);
+                } catch (e) {
+                    // Fallback para OpenSSL 1.x
+                    execSync(`openssl pkcs12 -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`);
                 }
+
+                // Repackage to AES-256 PFX
+                execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`);
+
+                finalPfxPath = modernPfxPath; // Tell Playwright to use the modern one
+            } catch (sslErr: any) {
+                console.error("[EcacService] Erro ao converter certificado:", sslErr.message);
+                // Fallback to original and pray
             }
 
             const browser = await chromium.launch({
