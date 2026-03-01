@@ -39,7 +39,7 @@ export class EcacService {
             }
 
             const browser = await chromium.launch({
-                headless: false, // For visual debugging
+                headless: true,
                 args: ['--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
             });
 

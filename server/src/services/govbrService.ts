@@ -35,7 +35,7 @@ export class GovBrService {
             }
 
             const browser = await chromium.launch({
-                headless: false, // For testing visually
+                headless: true,
                 args: ['--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
             });
 
@@ -220,7 +220,7 @@ export class GovBrService {
             }
 
             const browser = await chromium.launch({
-                headless: false,
+                headless: true,
                 args: ['--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
             });
 
