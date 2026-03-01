@@ -71,13 +71,14 @@ export class EcacService {
 
             const page = await context.newPage();
             page.on('console', msg => fileLog('\n[e-CAC DOM LOG]: ' + msg.text()));
-            page.setDefaultNavigationTimeout(45000);
-            page.setDefaultTimeout(30000);
+            page.setDefaultNavigationTimeout(90000);
+            page.setDefaultTimeout(60000);
 
             try {
                 // 1. Acesso pela porta da frente
                 console.log("[EcacService] Navegando para e-CAC Home...");
-                await page.goto('https://cav.receita.fazenda.gov.br/autenticacao/login', { waitUntil: 'networkidle' });
+                // Avoid networkidle as e-CAC often has tracking scripts that never finish
+                await page.goto('https://cav.receita.fazenda.gov.br/autenticacao/login', { waitUntil: 'domcontentloaded' });
 
                 // 2. Clicar no botão 'Entrar com gov.br'
                 console.log("[EcacService] Procurando botão Entrar com gov.br...");
@@ -162,13 +163,14 @@ export class EcacService {
                 const framePendencies = await targetFrame.evaluate(() => {
                     console.log("Iniciando varredura de tabelas na página do e-CAC...");
                     const arr: any[] = [];
-                    const rows = Array.from(document.querySelectorAll('table tr, .linha-tabela'));
+                    const rows = Array.from(document.querySelectorAll('table tr, .linha-tabela, tr[class*="linha-tabela"]'));
                     console.log("Encontradas " + rows.length + " linhas potenciais de tabela.");
 
                     rows.forEach((row, index) => {
                         const text = (row as HTMLElement).innerText.trim().toUpperCase();
                         console.log("Linha " + index + " preview: " + text.substring(0, 50));
-                        if (text.includes('PIS') || text.includes('COFINS') || text.includes('IPI') || text.includes('IRPJ') || text.includes('MULTA') || text.includes('DÉBITO') || text.includes('SIMPLES NACIONAL')) {
+                        // Include a broader set of keywords for debts, omit headers
+                        if (!text.includes('SITUAÇÃO FISCAL') && !text.includes('TRIBUTO') && (text.includes('PIS') || text.includes('COFINS') || text.includes('IPI') || text.includes('IRPJ') || text.includes('IRPF') || text.includes('CSLL') || text.includes('MULTA') || text.includes('INSS') || text.includes('DÉBITO') || text.includes('DEBITO') || text.includes('SIMPLES NACIONAL') || text.includes('PARCELAMENTO'))) {
                             const cells = row.querySelectorAll('td');
                             if (cells.length > 1) {
                                 const desc = (cells[0] as HTMLElement)?.innerText.trim() || text;
@@ -176,23 +178,43 @@ export class EcacService {
 
                                 if (parseFloat(valStr) > 0) {
                                     arr.push({
-                                        descricao: `Situação RFB: ${desc.substring(0, 50)}...`,
+                                        descricao: `Situação RFB: ${desc.substring(0, 70)}...`,
                                         risco: "Alto",
                                         valor: parseFloat(valStr)
+                                    });
+                                } else {
+                                    arr.push({
+                                        descricao: `Aviso/Suspenso RFB: ${desc.substring(0, 70)}...`,
+                                        risco: "Médio",
+                                        valor: 0
                                     });
                                 }
                             } else {
                                 arr.push({
-                                    descricao: `Aviso RFB: ${text.substring(0, 50)}...`,
+                                    descricao: `Aviso RFB: ${text.substring(0, 70)}...`,
                                     risco: "Alto",
                                     valor: 0
                                 });
                             }
                         }
                     });
+
+                    // Se não encontrou nada na tabela, mas a página diz que tem, cria um genérico
+                    if (arr.length === 0 && (document.body.innerText.toUpperCase().includes('POSSUI PENDÊNCIAS') || document.body.innerText.toUpperCase().includes('TEM PENDÊNCIAS'))) {
+                        arr.push({
+                            descricao: `Aviso RFB: Contribuinte possui pendências, mas não puderam ser extraídas automaticamente. Acesse o portal.`,
+                            risco: "Alto",
+                            valor: 0
+                        });
+                    }
+
                     return arr;
                 });
                 realPendencies.push(...framePendencies);
+
+                if (realPendencies.length === 0) {
+                    console.log("[EcacService] Nenhuma pendência financeira encontrada nas tabelas extraídas.");
+                }
 
                 return {
                     status: 'success',
@@ -206,7 +228,8 @@ export class EcacService {
             }
         } catch (error: any) {
             console.error("\n[EcacService] 🔥 SCRAPING ERROR CAUGHT 🔥", error.stack || error);
-            return { status: 'error', message: `Erro interno no e-CAC: ${error.message}`, pendencies: [] }; // Return the actual thrown error properly
+            // DO NOT return success with 0 pendencies if the scraper crashed. Throw so it flags as an error or is properly reported to UI.
+            throw new Error(`Erro na extração do e-CAC: ${error.message}`);
         } finally {
             if (fs.existsSync(pfxPath)) fs.unlinkSync(pfxPath);
             if (fs.existsSync(pfxPath + '.pem')) fs.unlinkSync(pfxPath + '.pem');
