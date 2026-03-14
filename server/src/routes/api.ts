@@ -2,6 +2,12 @@ import { Router } from 'express';
 import multer from 'multer';
 import { EcacService } from '../services/ecacService';
 import { GovBrService } from '../services/govbrService';
+import { TaxParser } from '../TaxParser';
+import { CNDService } from '../services/CNDService';
+import { scanRFB } from '../services/rfbScanner';
+import { GoogleSheetsService } from '../services/GoogleSheetsService';
+import { EmailService } from '../services/EmailService';
+import { MunicipalService } from '../services/municipalService';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -42,15 +48,6 @@ router.get('/status', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
-export default router;
-
-import { TaxParser } from '../TaxParser';
-import { CNDService } from '../services/CNDService';
-import { scanRFB } from '../services/rfbScanner';
-import { GoogleSheetsService } from '../services/GoogleSheetsService';
-import { EmailService } from '../services/EmailService';
-import { MunicipalService } from '../services/municipalService';
-
 // Endpoint individual para varredura municipal
 router.post('/audit/municipal', upload.single('certificate'), async (req, res) => {
     try {
@@ -71,35 +68,41 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         const password = req.body.password;
         const cnpj = req.body.cnpj || 'Não Informado';
 
-        // 1. Acesso aos órgãos federais e parse
+        // 1. Acesso aos órgãos federais e municipal em paralelo
         let ecacResult: any = null;
         let pendenciasFederais: any[] = [];
         let federalError = false;
-        try {
-            ecacResult = await scanRFB(pfxBase64, password);
+        let pendenciasMunicipais: any[] = [];
+        let certidaoMunicipal = null;
+
+        const [federalResult, municipalResult] = await Promise.allSettled([
+            scanRFB(pfxBase64, password),
+            MunicipalService.scanMunicipal(pfxBase64, password, cnpj)
+        ]);
+
+        // Process federal result
+        if (federalResult.status === 'fulfilled') {
+            ecacResult = federalResult.value;
             pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
-        } catch (federalErr: any) {
-            console.error("Erro na varredura federal:", federalErr.message);
+        } else {
+            console.error("Erro na varredura federal:", federalResult.reason?.message);
             federalError = true;
             pendenciasFederais = [{
                 orgao: 'Receita Federal / e-CAC',
                 tipo: 'VERIFICACAO_MANUAL',
-                descricao: `Comunicação com órgãos federais indisponível: ${federalErr.message}. Verificar manualmente.`,
+                descricao: `Comunicação com órgãos federais indisponível: ${federalResult.reason?.message || 'Erro desconhecido'}. Verificar manualmente.`,
                 riskLevel: 'High',
             }];
         }
 
-        // 2. Varredura municipal (prefeituras) - executa em paralelo quando possivel
-        let pendenciasMunicipais: any[] = [];
-        let certidaoMunicipal = null;
-        try {
-            const municipalResult = await MunicipalService.scanMunicipal(pfxBase64, password, cnpj);
-            pendenciasMunicipais = municipalResult.pendencias || [];
-            if (municipalResult.certidao) {
-                certidaoMunicipal = municipalResult.certidao;
+        // Process municipal result
+        if (municipalResult.status === 'fulfilled') {
+            pendenciasMunicipais = municipalResult.value.pendencias || [];
+            if (municipalResult.value.certidao) {
+                certidaoMunicipal = municipalResult.value.certidao;
             }
-        } catch (municipalError: any) {
-            console.error("Erro na varredura municipal:", municipalError.message);
+        } else {
+            console.error("Erro na varredura municipal:", municipalResult.reason?.message);
             pendenciasMunicipais = [{
                 orgao: 'Prefeitura Municipal',
                 tipo: 'VERIFICACAO_MANUAL',
@@ -116,14 +119,18 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         // 4. Emissao Inteligente de CNDs
         if (!federalError && pendenciasFederais.length === 0) {
             console.log(`CNPJ ${cnpj} limpo no federal. Tentando emitir CND Federal...`);
-            const cndFederal = await CNDService.emitFederal(pfxBase64, password);
-            if (cndFederal) {
-                certidoes.push({
-                    orgao: 'Receita Federal / PGFN',
-                    nome: 'Certidão Negativa de Débitos Relativos aos Tributos Federais',
-                    status: 'EMITIDA',
-                    arquivoBase64: cndFederal
-                });
+            try {
+                const cndFederal = await CNDService.emitFederal(pfxBase64, password);
+                if (cndFederal) {
+                    certidoes.push({
+                        orgao: 'Receita Federal / PGFN',
+                        nome: 'Certidão Negativa de Débitos Relativos aos Tributos Federais',
+                        status: 'EMITIDA',
+                        arquivoBase64: cndFederal
+                    });
+                }
+            } catch (cndErr: any) {
+                console.error("Erro ao emitir CND Federal:", cndErr.message);
             }
         }
 
@@ -180,3 +187,5 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         return res.status(500).json({ error: 'Falha na comunicação com os órgãos governamentais.', details: error.message });
     }
 });
+
+export default router;
