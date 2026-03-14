@@ -49,26 +49,59 @@ import { CNDService } from '../services/CNDService';
 import { scanRFB } from '../services/rfbScanner';
 import { GoogleSheetsService } from '../services/GoogleSheetsService';
 import { EmailService } from '../services/EmailService';
+import { MunicipalService } from '../services/municipalService';
+
+// Endpoint individual para varredura municipal
+router.post('/audit/municipal', upload.single('certificate'), async (req, res) => {
+    try {
+        if (!req.file || !req.body.password) return res.status(400).json({ error: 'Falta certificado ou senha.' });
+        const pfxBase64 = req.file.buffer.toString('base64');
+        const result = await MunicipalService.scanMunicipal(pfxBase64, req.body.password, req.body.cnpj);
+        return res.json(result);
+    } catch (e: any) { return res.status(500).json({ error: e.message }); }
+});
 
 router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, res) => {
     try {
         if (!req.file || !req.body.password) {
             return res.status(400).json({ error: 'Certificado e senha são obrigatórios.' });
         }
-        
+
         const pfxBase64 = req.file.buffer.toString('base64');
         const password = req.body.password;
         const cnpj = req.body.cnpj || 'Não Informado';
 
-        // 1. Acesso aos órgãos e parse
+        // 1. Acesso aos órgãos federais e parse
         const ecacResult = await scanRFB(pfxBase64, password);
-        const pendencias = TaxParser.parseEcacDashboard(ecacResult);
+        const pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
 
-        let certidoes = [];
+        // 2. Varredura municipal (prefeituras) - executa em paralelo quando possivel
+        let pendenciasMunicipais: any[] = [];
+        let certidaoMunicipal = null;
+        try {
+            const municipalResult = await MunicipalService.scanMunicipal(pfxBase64, password, cnpj);
+            pendenciasMunicipais = municipalResult.pendencias || [];
+            if (municipalResult.certidao) {
+                certidaoMunicipal = municipalResult.certidao;
+            }
+        } catch (municipalError: any) {
+            console.error("Erro na varredura municipal:", municipalError.message);
+            pendenciasMunicipais = [{
+                orgao: 'Prefeitura Municipal',
+                tipo: 'VERIFICACAO_MANUAL',
+                descricao: 'Varredura municipal indisponivel no momento. Verificar manualmente.',
+                riskLevel: 'Medium',
+            }];
+        }
 
-        // 3. Emissão Inteligente
-        if (pendencias.length === 0) {
-            console.log(`CNPJ ${cnpj} limpo. Tentando emitir CND...`);
+        // 3. Consolida todas as pendencias
+        const pendencias = [...pendenciasFederais, ...pendenciasMunicipais];
+
+        let certidoes: any[] = [];
+
+        // 4. Emissao Inteligente de CNDs
+        if (pendenciasFederais.length === 0) {
+            console.log(`CNPJ ${cnpj} limpo no federal. Tentando emitir CND Federal...`);
             const cndFederal = await CNDService.emitFederal(pfxBase64, password);
             if (cndFederal) {
                 certidoes.push({
@@ -80,11 +113,32 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             }
         }
 
+        // Adiciona certidao municipal se emitida
+        if (certidaoMunicipal) {
+            certidoes.push(certidaoMunicipal);
+        }
+
+        // Adiciona certidoes nao emitidas para visibilidade
+        if (pendenciasFederais.length > 0) {
+            certidoes.push({
+                orgao: 'Receita Federal / PGFN',
+                nome: 'Certidão Negativa de Débitos Federais',
+                status: 'NAO EMITIDA - Pendencias detectadas',
+            });
+        }
+        if (pendenciasMunicipais.length > 0 && !certidaoMunicipal) {
+            certidoes.push({
+                orgao: 'Prefeitura Municipal',
+                nome: 'Certidão Negativa de Débitos Municipais',
+                status: 'NAO EMITIDA - Pendencias detectadas',
+            });
+        }
+
         const statusCliente = pendencias.length === 0 ? 'REGULAR' : 'IRREGULAR';
-        const orgaos = [...new Set(pendencias.map(p => p.orgao))].join(', ');
+        const orgaos = [...new Set(pendencias.map((p: any) => p.orgao))].join(', ');
         const razaoSocial = ecacResult.razaoSocial || `Empresa ${cnpj}`;
 
-        // 4. Integrações Assíncronas (Planilhas + E-mail)
+        // 5. Integracoes Assincronas (Planilhas + E-mail)
         GoogleSheetsService.logAuditResult({
             cnpj: cnpj,
             razaoSocial: razaoSocial,
@@ -99,7 +153,7 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                .catch(err => console.error("Email Async Error: ", err));
         }
 
-        // 5. Retorna para o Frontend
+        // 6. Retorna para o Frontend
         return res.json({
             status: 'success',
             clienteRegular: pendencias.length === 0,
