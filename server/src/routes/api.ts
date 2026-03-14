@@ -48,6 +48,40 @@ router.get('/status', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
+// Diagnostic endpoint - tests file upload + Chromium launch without full scraping
+router.post('/diagnostic', upload.single('certificate'), async (req, res) => {
+    const checks: Record<string, string> = {};
+
+    // 1. Check file upload
+    checks['upload'] = req.file ? `OK (${req.file.size} bytes)` : 'FALHOU - nenhum arquivo recebido';
+    checks['password'] = req.body.password ? 'OK' : 'FALHOU - senha não recebida';
+
+    // 2. Check Chromium launch
+    try {
+        const { chromium } = require('playwright');
+        const browser = await chromium.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        });
+        const version = browser.version();
+        await browser.close();
+        checks['chromium'] = `OK (v${version})`;
+    } catch (e: any) {
+        checks['chromium'] = `FALHOU - ${e.message}`;
+    }
+
+    // 3. Check OpenSSL
+    try {
+        const { execSync } = require('child_process');
+        const ver = execSync('openssl version').toString().trim();
+        checks['openssl'] = `OK (${ver})`;
+    } catch (e: any) {
+        checks['openssl'] = `FALHOU - ${e.message}`;
+    }
+
+    return res.json({ diagnostic: checks });
+});
+
 // Endpoint individual para varredura municipal
 router.post('/audit/municipal', upload.single('certificate'), async (req, res) => {
     try {
