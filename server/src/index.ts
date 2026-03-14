@@ -16,6 +16,19 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Routes
 app.use('/api', apiRouter);
 
+// Root route
+app.get('/', (req, res) => {
+    res.json({
+        service: 'SP Compliance API',
+        status: 'running',
+        version: '1.0.0',
+        endpoints: {
+            health: '/health',
+            api: '/api/status'
+        }
+    });
+});
+
 // Healthcheck
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'ConsultaSP Backend Service is running' });
