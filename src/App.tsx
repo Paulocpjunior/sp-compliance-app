@@ -39,7 +39,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: 'plano', label: 'Plano de Acao', icon: Target },
 ];
 
-const API_URL = 'https://api-sp-compliance-631239634290.southamerica-east1.run.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api-sp-compliance-68935026677.southamerica-east1.run.app';
 
 const steps = [
   { label: 'Validando certificado A1...', duration: 1500 },
@@ -165,7 +165,9 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Erro na comunicacao com os orgaos fiscais.');
+        const errBody = await response.json().catch(() => null);
+        const detail = errBody?.details || errBody?.error || '';
+        throw new Error(detail || 'Erro na comunicacao com os orgaos fiscais. Verifique sua conexao e tente novamente.');
       }
 
       const data = await response.json();

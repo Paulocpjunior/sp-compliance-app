@@ -28,7 +28,7 @@ jobs:
       - name: Build frontend
         run: npm run build
         env:
-          VITE_API_URL: https://api-sp-compliance-68935026677.southamerica-east1.run.app/api
+          VITE_API_URL: https://api-sp-compliance-68935026677.southamerica-east1.run.app
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Authenticate to Google Cloud

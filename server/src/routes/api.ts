@@ -72,8 +72,22 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         const cnpj = req.body.cnpj || 'Não Informado';
 
         // 1. Acesso aos órgãos federais e parse
-        const ecacResult = await scanRFB(pfxBase64, password);
-        const pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
+        let ecacResult: any = null;
+        let pendenciasFederais: any[] = [];
+        let federalError = false;
+        try {
+            ecacResult = await scanRFB(pfxBase64, password);
+            pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
+        } catch (federalErr: any) {
+            console.error("Erro na varredura federal:", federalErr.message);
+            federalError = true;
+            pendenciasFederais = [{
+                orgao: 'Receita Federal / e-CAC',
+                tipo: 'VERIFICACAO_MANUAL',
+                descricao: `Comunicação com órgãos federais indisponível: ${federalErr.message}. Verificar manualmente.`,
+                riskLevel: 'High',
+            }];
+        }
 
         // 2. Varredura municipal (prefeituras) - executa em paralelo quando possivel
         let pendenciasMunicipais: any[] = [];
@@ -100,7 +114,7 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         let certidoes: any[] = [];
 
         // 4. Emissao Inteligente de CNDs
-        if (pendenciasFederais.length === 0) {
+        if (!federalError && pendenciasFederais.length === 0) {
             console.log(`CNPJ ${cnpj} limpo no federal. Tentando emitir CND Federal...`);
             const cndFederal = await CNDService.emitFederal(pfxBase64, password);
             if (cndFederal) {
@@ -136,7 +150,7 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
 
         const statusCliente = pendencias.length === 0 ? 'REGULAR' : 'IRREGULAR';
         const orgaos = [...new Set(pendencias.map((p: any) => p.orgao))].join(', ');
-        const razaoSocial = ecacResult.razaoSocial || `Empresa ${cnpj}`;
+        const razaoSocial = ecacResult?.razaoSocial || `Empresa ${cnpj}`;
 
         // 5. Integracoes Assincronas (Planilhas + E-mail)
         GoogleSheetsService.logAuditResult({
