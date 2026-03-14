@@ -159,10 +159,14 @@ export default function App() {
         formData.append('cnpj', parsed.cnpj);
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 280000); // 280s (Cloud Run timeout is 300s)
+
       const response = await fetch(`${API_URL}/api/v1/auditoria-completa`, {
         method: 'POST',
         body: formData,
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
 
       if (!response.ok) {
         const errBody = await response.json().catch(() => null);
@@ -200,7 +204,13 @@ export default function App() {
 
       setActiveTab('dashboard');
     } catch (err: any) {
-      setError(err.message || 'Erro inesperado durante a auditoria.');
+      if (err.name === 'AbortError') {
+        setError('A auditoria excedeu o tempo limite. O servidor pode estar sobrecarregado. Tente novamente em alguns minutos.');
+      } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError') || err.message?.includes('network')) {
+        setError('Falha na conexão com o servidor. Verifique sua internet e tente novamente.');
+      } else {
+        setError(err.message || 'Erro inesperado durante a auditoria.');
+      }
     } finally {
       setLoading(false);
     }

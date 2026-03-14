@@ -75,9 +75,16 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         let pendenciasMunicipais: any[] = [];
         let certidaoMunicipal = null;
 
+        // Timeout wrapper to prevent Cloud Run 300s limit from killing the connection
+        const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> =>
+            Promise.race([
+                promise,
+                new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
+            ]);
+
         const [federalResult, municipalResult] = await Promise.allSettled([
-            scanRFB(pfxBase64, password),
-            MunicipalService.scanMunicipal(pfxBase64, password, cnpj)
+            withTimeout(scanRFB(pfxBase64, password), 240000, 'Varredura Federal'),
+            withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 240000, 'Varredura Municipal')
         ]);
 
         // Process federal result
