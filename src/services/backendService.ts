@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = `http://${window.location.hostname}:3001/api`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api-sp-compliance-631239634290.southamerica-east1.run.app/api';
 
 export class BackendService {
     /**
