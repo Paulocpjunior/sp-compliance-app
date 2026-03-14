@@ -45,7 +45,15 @@ export class EcacService {
 
             const browser = await chromium.launch({
                 headless: true,
-                args: ['--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--window-size=1280,800',
+                    '--ignore-certificate-errors',
+                    '--disable-web-security'
+                ]
             });
 
             const context = await browser.newContext({
