@@ -79,7 +79,7 @@ export class EcacService {
             });
 
             const page = await context.newPage();
-            page.on('console', msg => fileLog('\n[e-CAC DOM LOG]: ' + msg.text()));
+            page.on('console', (msg: any) => fileLog('\n[e-CAC DOM LOG]: ' + msg.text()));
             page.setDefaultNavigationTimeout(90000);
             page.setDefaultTimeout(60000);
 
@@ -147,7 +147,7 @@ export class EcacService {
 
                 const realPendencies: any[] = [];
 
-                const frm = page.frames().find(f => f.name() === 'frmPrincipal' || f.url().includes('SitFis'));
+                const frm = page.frames().find((f: any) => f.name() === 'frmPrincipal' || f.url().includes('SitFis'));
                 const targetFrame = frm || page.mainFrame();
 
                 const framePendencies = await targetFrame.evaluate(() => {
