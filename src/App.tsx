@@ -159,19 +159,52 @@ export default function App() {
         formData.append('cnpj', parsed.cnpj);
       }
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 280000); // 280s (Cloud Run timeout is 300s)
+      // Fetch with retry logic for transient network failures
+      const MAX_RETRIES = 2;
+      let lastError: Error | null = null;
+      let response: Response | null = null;
 
-      const response = await fetch(`${API_URL}/api/v1/auditoria-completa`, {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeoutId));
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        if (attempt > 0) {
+          const delay = Math.pow(2, attempt) * 1000; // 2s, 4s
+          await new Promise(r => setTimeout(r, delay));
+        }
 
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => null);
-        const detail = errBody?.details || errBody?.error || '';
-        throw new Error(detail || 'Erro na comunicacao com os orgaos fiscais. Verifique sua conexao e tente novamente.');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 280000); // 280s (Cloud Run timeout is 300s)
+
+        try {
+          response = await fetch(`${API_URL}/api/v1/auditoria-completa`, {
+            method: 'POST',
+            body: formData,
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            const errBody = await response.json().catch(() => null);
+            const detail = errBody?.details || errBody?.error || '';
+            throw new Error(detail || 'Erro na comunicacao com os orgaos fiscais. Verifique sua conexao e tente novamente.');
+          }
+          break; // Success
+        } catch (err: any) {
+          clearTimeout(timeoutId);
+          lastError = err;
+          const isNetworkError = err.name === 'TypeError' ||
+            err.message?.includes('Failed to fetch') ||
+            err.message?.includes('NetworkError') ||
+            err.message?.includes('network') ||
+            err.message?.includes('conexão') ||
+            err.message?.includes('perdida') ||
+            err.message?.includes('Load failed');
+          if (!isNetworkError || attempt === MAX_RETRIES) {
+            throw err;
+          }
+        }
+      }
+
+      if (!response) {
+        throw lastError || new Error('Falha na conexao com o servidor.');
       }
 
       const data = await response.json();
@@ -206,8 +239,8 @@ export default function App() {
     } catch (err: any) {
       if (err.name === 'AbortError') {
         setError('A auditoria excedeu o tempo limite. O servidor pode estar sobrecarregado. Tente novamente em alguns minutos.');
-      } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError') || err.message?.includes('network')) {
-        setError('Falha na conexão com o servidor. Verifique sua internet e tente novamente.');
+      } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError') || err.message?.includes('network') || err.message?.includes('conexão') || err.message?.includes('perdida') || err.message?.includes('Load failed')) {
+        setError('Falha na conexao com o servidor. A conexao foi perdida durante a auditoria. Isso pode ocorrer quando o servidor esta processando muitas requisicoes. Tente novamente em alguns minutos.');
       } else {
         setError(err.message || 'Erro inesperado durante a auditoria.');
       }
