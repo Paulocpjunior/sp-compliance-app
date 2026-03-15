@@ -132,7 +132,8 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         const password = req.body.password;
         const cnpj = req.body.cnpj || 'Não Informado';
 
-        // 1. Acesso aos órgãos federais e municipal em paralelo
+        // 1. Acesso aos órgãos federais e municipal SEQUENCIALMENTE
+        // (rodar em paralelo causa 2 instancias Chromium simultaneas e estoura a memoria do Cloud Run)
         let ecacResult: any = null;
         let pendenciasFederais: any[] = [];
         let federalError = false;
@@ -146,34 +147,30 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                 new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
             ]);
 
-        const [federalResult, municipalResult] = await Promise.allSettled([
-            withTimeout(scanRFB(pfxBase64, password), 240000, 'Varredura Federal'),
-            withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 240000, 'Varredura Municipal')
-        ]);
-
-        // Process federal result
-        if (federalResult.status === 'fulfilled') {
-            ecacResult = federalResult.value;
+        // Federal scan first
+        try {
+            ecacResult = await withTimeout(scanRFB(pfxBase64, password), 180000, 'Varredura Federal');
             pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
-        } else {
-            console.error("Erro na varredura federal:", federalResult.reason?.message);
+        } catch (err: any) {
+            console.error("Erro na varredura federal:", err.message);
             federalError = true;
             pendenciasFederais = [{
                 orgao: 'Receita Federal / e-CAC',
                 tipo: 'VERIFICACAO_MANUAL',
-                descricao: `Comunicação com órgãos federais indisponível: ${federalResult.reason?.message || 'Erro desconhecido'}. Verificar manualmente.`,
+                descricao: `Comunicação com órgãos federais indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
                 riskLevel: 'High',
             }];
         }
 
-        // Process municipal result
-        if (municipalResult.status === 'fulfilled') {
-            pendenciasMunicipais = municipalResult.value.pendencias || [];
-            if (municipalResult.value.certidao) {
-                certidaoMunicipal = municipalResult.value.certidao;
+        // Municipal scan after federal completes (sequential to avoid memory exhaustion)
+        try {
+            const municipalResult = await withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 60000, 'Varredura Municipal');
+            pendenciasMunicipais = municipalResult.pendencias || [];
+            if (municipalResult.certidao) {
+                certidaoMunicipal = municipalResult.certidao;
             }
-        } else {
-            console.error("Erro na varredura municipal:", municipalResult.reason?.message);
+        } catch (err: any) {
+            console.error("Erro na varredura municipal:", err.message);
             pendenciasMunicipais = [{
                 orgao: 'Prefeitura Municipal',
                 tipo: 'VERIFICACAO_MANUAL',

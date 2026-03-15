@@ -100,12 +100,12 @@ export class MunicipalService {
    * Portal: https://nfe.prefeitura.sp.gov.br
    */
   private static async scanPrefeituraSP(pfxPath: string, password: string, cnpj?: string): Promise<MunicipalScanResult> {
-    let browser;
+    let browser: any = null;
 
     try {
       browser = await chromium.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
       });
 
       const context = await browser.newContext({
@@ -187,7 +187,7 @@ export class MunicipalService {
       };
 
     } finally {
-      if (browser) await browser.close();
+      if (browser) await browser.close().catch(() => { });
     }
   }
 }

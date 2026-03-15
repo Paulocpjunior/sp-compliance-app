@@ -33,13 +33,15 @@ export class CNDService {
         const certPath = path.join(process.cwd(), `temp_cert_${Date.now()}.pfx`);
         fs.writeFileSync(certPath, Buffer.from(pfxBase64, 'base64'));
 
-        let browser;
+        let browser: any = null;
         try {
             browser = await puppeteer.launch({
                 headless: true,
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
                     '--ignore-certificate-errors',
                     `--client-certificate-file=${certPath}` // Injeta o certificado mTLS
                 ]
@@ -95,8 +97,8 @@ export class CNDService {
             console.error('Falha na emissão da CND:', error.message);
             return null;
         } finally {
-            if (browser) await browser.close();
-            if (fs.existsSync(certPath)) fs.unlinkSync(certPath);
+            if (browser) await browser.close().catch(() => { });
+            try { if (fs.existsSync(certPath)) fs.unlinkSync(certPath); } catch { /* ignore */ }
         }
     }
 }

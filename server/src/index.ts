@@ -53,3 +53,11 @@ const server = app.listen(port, () => {
 // Increase keep-alive and headers timeout to match Cloud Run's 300s limit
 server.keepAliveTimeout = 310000; // 310s (slightly above Cloud Run's 300s)
 server.headersTimeout = 320000;   // 320s (must be > keepAliveTimeout)
+
+// Prevent process from dying on unhandled errors
+process.on('uncaughtException', (err) => {
+    console.error('[FATAL] Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('[FATAL] Unhandled Rejection:', reason);
+});
