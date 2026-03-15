@@ -649,7 +649,7 @@ const App: React.FC = () => {
                             ))}
                             {/* NFP Pro Cloud — atalho externo */}
                             <a
-                                href="https://consulta-sp.web.app"
+                                href="https://assistente-nfp-pro-cloud-292090471177.us-west1.run.app"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-sky-300 hover:bg-sky-50 dark:hover:bg-slate-700"
