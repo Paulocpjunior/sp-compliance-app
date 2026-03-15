@@ -61,7 +61,7 @@ export class GovBrService {
             });
 
             const page = await context.newPage();
-            page.on('console', msg => fileLog('\n[PGFN DOM LOG]: ' + msg.text()));
+            page.on('console', (msg: any) => fileLog('\n[PGFN DOM LOG]: ' + msg.text()));
             page.setDefaultNavigationTimeout(45000);
             page.setDefaultTimeout(30000);
 
@@ -142,7 +142,7 @@ export class GovBrService {
 
                 const realDebts: any[] = [];
                 // Look into IFrames if any
-                const targetFrame = page.frames().find(f => f.url().includes('consultar')) || page.mainFrame();
+                const targetFrame = page.frames().find((f: any) => f.url().includes('consultar')) || page.mainFrame();
 
                 const frameDebts = await targetFrame.evaluate(() => {
                     console.log("[GovBrService] Varrida na página PGFN iniciada...");
@@ -246,7 +246,7 @@ export class GovBrService {
             });
 
             const page = await context.newPage();
-            page.on('console', msg => fileLog('\n[e-Social DOM LOG]: ' + msg.text()));
+            page.on('console', (msg: any) => fileLog('\n[e-Social DOM LOG]: ' + msg.text()));
             page.setDefaultNavigationTimeout(45000);
             page.setDefaultTimeout(30000);
 
@@ -293,7 +293,7 @@ export class GovBrService {
                 }
 
                 const realPendencies: any[] = [];
-                const targetFrame = page.frames().find(f => f.url().includes('esocial')) || page.mainFrame();
+                const targetFrame = page.frames().find((f: any) => f.url().includes('esocial')) || page.mainFrame();
 
                 const framePendencies = await targetFrame.evaluate(() => {
                     console.log("[GovBrService] Varrida no e-Social Iniciada...");
