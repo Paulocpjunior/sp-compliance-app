@@ -128,14 +128,13 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no', // Disable Nginx buffering
+        'X-Accel-Buffering': 'no',
     });
 
     const sendEvent = (event: string, data: any) => {
         res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
     };
 
-    // Heartbeat every 15s to prevent proxy/LB idle timeout
     const heartbeat = setInterval(() => {
         res.write(': heartbeat\n\n');
     }, 15000);
@@ -148,7 +147,8 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             return;
         }
 
-        const pfxBase64 = req.file.buffer.toString('base64');
+        const pfxBuffer = req.file.buffer;
+        const pfxBase64 = pfxBuffer.toString('base64');
         const password = req.body.password;
         const cnpj = req.body.cnpj || 'Não Informado';
 
@@ -156,8 +156,10 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
 
         let ecacResult: any = null;
         let pendenciasFederais: any[] = [];
-        let federalError = false;
+        let pendenciasPGFN: any[] = [];
+        let pendenciasESocial: any[] = [];
         let pendenciasMunicipais: any[] = [];
+        let federalError = false;
         let certidaoMunicipal = null;
 
         const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> =>
@@ -166,34 +168,79 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                 new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
             ]);
 
-        // Run federal and municipal scans IN PARALLEL to stay well under Cloud Run's 300s timeout
-        sendEvent('progress', { step: 1, label: 'Conectando ao e-CAC e Prefeitura Municipal (paralelo)...' });
+        // ======================================================
+        // PHASE 1: e-CAC + PGFN in parallel (2 browsers, ~1GB RAM)
+        // ======================================================
+        sendEvent('progress', { step: 1, label: 'Varrendo e-CAC e PGFN (Receita Federal)...' });
 
-        const federalPromise = withTimeout(scanRFB(pfxBase64, password), 180000, 'Varredura Federal')
+        const ecacPromise = withTimeout(scanRFB(pfxBase64, password), 180000, 'e-CAC')
             .then((result) => {
                 ecacResult = result;
                 pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
-                sendEvent('progress', { step: 2, label: 'Varredura federal concluída.' });
+                console.log(`[Audit] e-CAC: ${pendenciasFederais.length} pendências encontradas`);
+                sendEvent('progress', { step: 2, label: `e-CAC: ${pendenciasFederais.length} pendência(s) encontrada(s).` });
             })
             .catch((err: any) => {
-                console.error("Erro na varredura federal:", err.message);
+                console.error("Erro na varredura e-CAC:", err.message);
                 federalError = true;
                 pendenciasFederais = [{
                     orgao: 'Receita Federal / e-CAC',
                     tipo: 'VERIFICACAO_MANUAL',
-                    descricao: `Comunicação com órgãos federais indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
+                    descricao: `Comunicação com e-CAC indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
                     riskLevel: 'High',
                 }];
-                sendEvent('progress', { step: 2, label: 'Varredura federal com falha parcial.' });
+                sendEvent('progress', { step: 2, label: 'e-CAC: falha parcial.' });
             });
 
-        const municipalPromise = withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 120000, 'Varredura Municipal')
+        const pgfnPromise = withTimeout(GovBrService.scrapePGFN(pfxBuffer, password), 120000, 'PGFN')
+            .then((result) => {
+                pendenciasPGFN = TaxParser.parsePGFNDebts(result);
+                console.log(`[Audit] PGFN: ${pendenciasPGFN.length} dívidas encontradas`);
+                sendEvent('progress', { step: 3, label: `PGFN: ${pendenciasPGFN.length} dívida(s) ativa(s).` });
+            })
+            .catch((err: any) => {
+                console.error("Erro na varredura PGFN:", err.message);
+                pendenciasPGFN = [{
+                    orgao: 'PGFN - Dívida Ativa da União',
+                    tipo: 'VERIFICACAO_MANUAL',
+                    descricao: `Comunicação com PGFN indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
+                    riskLevel: 'High',
+                }];
+                sendEvent('progress', { step: 3, label: 'PGFN: falha parcial.' });
+            });
+
+        await Promise.all([ecacPromise, pgfnPromise]);
+
+        // ======================================================
+        // PHASE 2: e-Social + Municipal in parallel (2 browsers, ~1GB RAM)
+        // ======================================================
+        sendEvent('progress', { step: 4, label: 'Varrendo e-Social e Prefeitura Municipal...' });
+
+        const esocialPromise = withTimeout(GovBrService.scrapeESocial(pfxBuffer, password), 120000, 'e-Social')
+            .then((result) => {
+                pendenciasESocial = TaxParser.parseESocialPendencies(result);
+                console.log(`[Audit] e-Social: ${pendenciasESocial.length} pendências encontradas`);
+                sendEvent('progress', { step: 5, label: `e-Social: ${pendenciasESocial.length} pendência(s).` });
+            })
+            .catch((err: any) => {
+                console.error("Erro na varredura e-Social:", err.message);
+                pendenciasESocial = [{
+                    orgao: 'e-Social',
+                    tipo: 'VERIFICACAO_MANUAL',
+                    descricao: `Comunicação com e-Social indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
+                    riskLevel: 'Medium',
+                }];
+                sendEvent('progress', { step: 5, label: 'e-Social: falha parcial.' });
+            });
+
+        const municipalPromise = withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 120000, 'Municipal')
             .then((municipalResult) => {
                 pendenciasMunicipais = municipalResult.pendencias || [];
                 if (municipalResult.certidao) {
                     certidaoMunicipal = municipalResult.certidao;
                 }
-                sendEvent('progress', { step: 4, label: 'Varredura municipal concluída.' });
+                console.log(`[Audit] Municipal: ${pendenciasMunicipais.length} pendências encontradas`);
+                sendEvent('progress', { step: 6, label: `Municipal: ${pendenciasMunicipais.length} pendência(s).` });
             })
             .catch((err: any) => {
                 console.error("Erro na varredura municipal:", err.message);
@@ -203,20 +250,31 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                     descricao: 'Varredura municipal indisponivel no momento. Verificar manualmente.',
                     riskLevel: 'Medium',
                 }];
-                sendEvent('progress', { step: 4, label: 'Varredura municipal com falha parcial.' });
+                sendEvent('progress', { step: 6, label: 'Municipal: falha parcial.' });
             });
 
-        await Promise.all([federalPromise, municipalPromise]);
+        await Promise.all([esocialPromise, municipalPromise]);
 
-        const pendencias = [...pendenciasFederais, ...pendenciasMunicipais];
+        // ======================================================
+        // CONSOLIDATION
+        // ======================================================
+        const pendencias = [
+            ...pendenciasFederais,
+            ...pendenciasPGFN,
+            ...pendenciasESocial,
+            ...pendenciasMunicipais,
+        ];
+
         let certidoes: any[] = [];
 
-        // CND emission
-        sendEvent('progress', { step: 5, label: 'Emitindo certidões (CNDs)...' });
-        if (!federalError && pendenciasFederais.length === 0) {
+        sendEvent('progress', { step: 7, label: 'Verificando certidões (CNDs)...' });
+
+        // Only try CND emission if federal is clean
+        const allFederalClean = !federalError && pendenciasFederais.length === 0 && pendenciasPGFN.length === 0;
+        if (allFederalClean) {
             console.log(`CNPJ ${cnpj} limpo no federal. Tentando emitir CND Federal...`);
             try {
-                const cndFederal = await CNDService.emitFederal(pfxBase64, password);
+                const cndFederal = await withTimeout(CNDService.emitFederal(pfxBase64, password), 60000, 'CND Federal');
                 if (cndFederal) {
                     certidoes.push({
                         orgao: 'Receita Federal / PGFN',
@@ -234,28 +292,36 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             certidoes.push(certidaoMunicipal);
         }
 
-        if (pendenciasFederais.length > 0) {
+        // Report CND status for each organ
+        if (pendenciasFederais.length > 0 || pendenciasPGFN.length > 0) {
             certidoes.push({
                 orgao: 'Receita Federal / PGFN',
                 nome: 'Certidão Negativa de Débitos Federais',
-                status: 'NAO EMITIDA - Pendencias detectadas',
+                status: 'NAO EMITIDA - Pendências detectadas',
+            });
+        }
+        if (pendenciasESocial.length > 0) {
+            certidoes.push({
+                orgao: 'e-Social / MTE',
+                nome: 'Certidão de Regularidade Trabalhista',
+                status: 'NAO EMITIDA - Pendências detectadas',
             });
         }
         if (pendenciasMunicipais.length > 0 && !certidaoMunicipal) {
             certidoes.push({
                 orgao: 'Prefeitura Municipal',
                 nome: 'Certidão Negativa de Débitos Municipais',
-                status: 'NAO EMITIDA - Pendencias detectadas',
+                status: 'NAO EMITIDA - Pendências detectadas',
             });
         }
 
-        sendEvent('progress', { step: 6, label: 'Calculando nível de risco...' });
+        sendEvent('progress', { step: 8, label: 'Calculando nível de risco...' });
 
         const statusCliente = pendencias.length === 0 ? 'REGULAR' : 'IRREGULAR';
         const orgaos = [...new Set(pendencias.map((p: any) => p.orgao))].join(', ');
         const razaoSocial = ecacResult?.razaoSocial || `Empresa ${cnpj}`;
 
-        // Async integrations (Sheets + Email)
+        // Async integrations (Sheets + Email) - don't block the response
         GoogleSheetsService.logAuditResult({
             cnpj: cnpj,
             razaoSocial: razaoSocial,
@@ -263,11 +329,11 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             totalPendencias: pendencias.length,
             orgaosComProblema: orgaos,
             linkCndGerada: ''
-        }).catch(err => console.error("Sheets Async Error: ", err));
+        }).catch((err: any) => console.error("Sheets Async Error: ", err));
 
         if (pendencias.length > 0) {
             EmailService.sendCriticalAlert(cnpj, razaoSocial, pendencias)
-               .catch(err => console.error("Email Async Error: ", err));
+               .catch((err: any) => console.error("Email Async Error: ", err));
         }
 
         // Final result

@@ -43,11 +43,13 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://api-sp-compliance-68935
 
 const steps = [
   { label: 'Validando certificado A1...' },
-  { label: 'Conectando ao e-CAC (Receita Federal)...' },
-  { label: 'Varredura federal concluída.' },
-  { label: 'Varrendo Prefeitura Municipal...' },
-  { label: 'Varredura municipal concluída.' },
-  { label: 'Emitindo certidoes (CNDs)...' },
+  { label: 'Varrendo e-CAC e PGFN (Receita Federal)...' },
+  { label: 'e-CAC concluido.' },
+  { label: 'PGFN concluido.' },
+  { label: 'Varrendo e-Social e Prefeitura Municipal...' },
+  { label: 'e-Social concluido.' },
+  { label: 'Municipal concluido.' },
+  { label: 'Verificando certidoes (CNDs)...' },
   { label: 'Calculando nivel de risco...' },
 ];
 

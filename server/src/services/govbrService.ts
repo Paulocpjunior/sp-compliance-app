@@ -20,18 +20,23 @@ export class GovBrService {
             fs.writeFileSync(pfxPath, pfxBuffer);
 
             let finalPfxPath = pfxPath;
-            if (process.platform === 'darwin') {
+            try {
+                console.log("[GovBrService] Convertendo formato legado do Certificado para AES-256 (BoringSSL)...");
+                const pemPath = pfxPath + '.pem';
+                const modernPfxPath = pfxPath + '.modern.pfx';
+                const { execSync } = require('child_process');
                 try {
-                    console.log("[GovBrService] Convertendo formato legado do Certificado para AES-256 (BoringSSL)...");
-                    const pemPath = pfxPath + '.pem';
-                    const modernPfxPath = pfxPath + '.modern.pfx';
-                    const { execSync } = require('child_process');
-                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`);
-                    execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`);
-                    finalPfxPath = modernPfxPath;
-                } catch (sslErr: any) {
-                    console.error("[GovBrService] Erro ao converter certificado:", sslErr.message);
+                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`, { timeout: 10000 });
+                } catch {
+                    execSync(`openssl pkcs12 -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`, { timeout: 10000 });
                 }
+                execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`, { timeout: 10000 });
+                if (fs.existsSync(modernPfxPath) && fs.statSync(modernPfxPath).size > 0) {
+                    finalPfxPath = modernPfxPath;
+                }
+                if (fs.existsSync(pemPath)) fs.unlinkSync(pemPath);
+            } catch (sslErr: any) {
+                console.error("[GovBrService] Erro ao converter certificado:", sslErr.message);
             }
 
             const browser = await chromium.launch({
@@ -205,18 +210,23 @@ export class GovBrService {
             fs.writeFileSync(pfxPath, pfxBuffer);
 
             let finalPfxPath = pfxPath;
-            if (process.platform === 'darwin') {
+            try {
+                console.log("[GovBrService] Convertendo formato legado do Certificado para AES-256 (BoringSSL)...");
+                const pemPath = pfxPath + '.pem';
+                const modernPfxPath = pfxPath + '.modern.pfx';
+                const { execSync } = require('child_process');
                 try {
-                    console.log("[GovBrService] Convertendo formato legado do Certificado para AES-256 (BoringSSL)...");
-                    const pemPath = pfxPath + '.pem';
-                    const modernPfxPath = pfxPath + '.modern.pfx';
-                    const { execSync } = require('child_process');
-                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`);
-                    execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`);
-                    finalPfxPath = modernPfxPath;
-                } catch (sslErr: any) {
-                    console.error("[GovBrService] Erro ao converter certificado:", sslErr.message);
+                    execSync(`openssl pkcs12 -legacy -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`, { timeout: 10000 });
+                } catch {
+                    execSync(`openssl pkcs12 -in "${pfxPath}" -passin pass:"${passphrase}" -nodes -out "${pemPath}"`, { timeout: 10000 });
                 }
+                execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${passphrase}"`, { timeout: 10000 });
+                if (fs.existsSync(modernPfxPath) && fs.statSync(modernPfxPath).size > 0) {
+                    finalPfxPath = modernPfxPath;
+                }
+                if (fs.existsSync(pemPath)) fs.unlinkSync(pemPath);
+            } catch (sslErr: any) {
+                console.error("[GovBrService] Erro ao converter certificado:", sslErr.message);
             }
 
             const browser = await chromium.launch({

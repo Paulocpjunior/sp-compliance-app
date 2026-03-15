@@ -150,70 +150,188 @@ export class EcacService {
 
                 const realPendencies: any[] = [];
 
-                const frm = page.frames().find((f: any) => f.name() === 'frmPrincipal' || f.url().includes('SitFis'));
-                const targetFrame = frm || page.mainFrame();
+                // Search ALL frames for data (e-CAC uses nested iframes heavily)
+                const allFrames = page.frames();
+                console.log(`[EcacService] Total de frames encontrados: ${allFrames.length}`);
 
-                const framePendencies = await targetFrame.evaluate(() => {
-                    console.log("Iniciando varredura de tabelas na página do e-CAC...");
-                    const arr: any[] = [];
-                    const rows = Array.from(document.querySelectorAll('table tr, .linha-tabela, tr[class*="linha-tabela"]'));
-                    console.log("Encontradas " + rows.length + " linhas potenciais de tabela.");
+                for (const frame of allFrames) {
+                    try {
+                        const frameUrl = frame.url();
+                        console.log(`[EcacService] Analisando frame: ${frameUrl.substring(0, 80)}`);
 
-                    rows.forEach((row, index) => {
-                        const text = (row as HTMLElement).innerText.trim().toUpperCase();
-                        console.log("Linha " + index + " preview: " + text.substring(0, 50));
-                        // Include a broader set of keywords for debts, omit headers
-                        if (!text.includes('SITUAÇÃO FISCAL') && !text.includes('TRIBUTO') && (text.includes('PIS') || text.includes('COFINS') || text.includes('IPI') || text.includes('IRPJ') || text.includes('IRPF') || text.includes('CSLL') || text.includes('MULTA') || text.includes('INSS') || text.includes('DÉBITO') || text.includes('DEBITO') || text.includes('SIMPLES NACIONAL') || text.includes('PARCELAMENTO'))) {
-                            const cells = row.querySelectorAll('td');
-                            if (cells.length > 1) {
-                                const desc = (cells[0] as HTMLElement)?.innerText.trim() || text;
-                                const valStr = (cells[cells.length - 1] as HTMLElement)?.innerText.replace(/[^0-9,]/g, '').replace(',', '.') || '0';
+                        const framePendencies = await frame.evaluate(() => {
+                            const arr: any[] = [];
+                            const fullText = document.body?.innerText?.toUpperCase() || '';
 
-                                if (parseFloat(valStr) > 0) {
+                            // =============================================
+                            // 1. DEBITOS E PARCELAMENTOS (tabelas)
+                            // =============================================
+                            const debtKeywords = [
+                                'PIS', 'COFINS', 'IPI', 'IRPJ', 'IRPF', 'CSLL', 'MULTA',
+                                'INSS', 'DÉBITO', 'DEBITO', 'SIMPLES NACIONAL', 'PARCELAMENTO',
+                                'CONTRIBUIÇÃO', 'CONTRIBUICAO', 'AUTO DE INFRAÇÃO', 'AUTO DE INFRACAO',
+                                'LANÇAMENTO', 'LANCAMENTO', 'DARF', 'GPS', 'CPSS', 'FUNRURAL',
+                                'IOF', 'ITR', 'CIDE', 'RAT', 'GILRAT', 'FGTS', 'SALDO DEVEDOR',
+                                'INSCRIÇÃO', 'INSCRICAO', 'COBRANÇA', 'COBRANCA'
+                            ];
+                            const headerKeywords = ['SITUAÇÃO FISCAL', 'SITUACAO FISCAL', 'TRIBUTO', 'DESCRIÇÃO', 'DESCRICAO'];
+
+                            const rows = Array.from(document.querySelectorAll('table tr, .linha-tabela, tr[class*="linha"]'));
+
+                            rows.forEach((row) => {
+                                const text = (row as HTMLElement).innerText.trim().toUpperCase();
+                                const isHeader = headerKeywords.some(h => text.startsWith(h));
+                                if (isHeader || text.length < 5) return;
+
+                                const hasDebt = debtKeywords.some(kw => text.includes(kw));
+                                if (!hasDebt) return;
+
+                                const cells = row.querySelectorAll('td');
+                                const desc = cells.length > 1
+                                    ? (cells[0] as HTMLElement)?.innerText.trim()
+                                    : text;
+
+                                // Extract monetary value (R$ X.XXX,XX or just numbers with comma)
+                                const monetaryMatch = text.match(/R\$\s*([\d.,]+)/);
+                                let valor = 0;
+                                if (monetaryMatch) {
+                                    valor = parseFloat(monetaryMatch[1].replace(/\./g, '').replace(',', '.'));
+                                } else if (cells.length > 1) {
+                                    const lastCell = (cells[cells.length - 1] as HTMLElement)?.innerText || '';
+                                    const numMatch = lastCell.match(/([\d.,]+)/);
+                                    if (numMatch) {
+                                        valor = parseFloat(numMatch[1].replace(/\./g, '').replace(',', '.'));
+                                    }
+                                }
+
+                                const tipo = text.includes('PARCELAMENTO') ? 'PARCELAMENTO'
+                                    : text.includes('AUTO DE INFRA') ? 'AUTO_INFRACAO'
+                                    : text.includes('MULTA') ? 'MULTA'
+                                    : 'DEBITO_FISCAL';
+
+                                arr.push({
+                                    tipo,
+                                    descricao: `Débito RFB: ${desc.substring(0, 100)}`,
+                                    risco: "Alto",
+                                    valor: isNaN(valor) ? 0 : valor
+                                });
+                            });
+
+                            // =============================================
+                            // 2. DECLARACOES / OBRIGACOES ACESSORIAS AUSENTES
+                            // =============================================
+                            const obligationPatterns = [
+                                { name: 'DCTF', keywords: ['DCTF', 'DCTFWEB', 'DCTF WEB'] },
+                                { name: 'ECD', keywords: ['ECD', 'ESCRITURAÇÃO CONTÁBIL DIGITAL', 'ESCRITURACAO CONTABIL DIGITAL'] },
+                                { name: 'ECF', keywords: ['ECF', 'ESCRITURAÇÃO CONTÁBIL FISCAL', 'ESCRITURACAO CONTABIL FISCAL'] },
+                                { name: 'EFD_CONTRIBUICOES', keywords: ['EFD-CONTRIBUIÇÕES', 'EFD-CONTRIBUICOES', 'EFD CONTRIBUIÇÕES', 'EFD CONTRIBUICOES'] },
+                                { name: 'EFD_ICMS_IPI', keywords: ['EFD-ICMS', 'EFD ICMS/IPI', 'SPED FISCAL', 'EFD-ICMS/IPI'] },
+                                { name: 'EFD_REINF', keywords: ['EFD-REINF', 'EFD REINF', 'REINF'] },
+                                { name: 'DIRF', keywords: ['DIRF'] },
+                                { name: 'PGDAS', keywords: ['PGDAS', 'PGDAS-D'] },
+                                { name: 'DEFIS', keywords: ['DEFIS'] },
+                                { name: 'RAIS', keywords: ['RAIS'] },
+                                { name: 'GFIP', keywords: ['GFIP', 'SEFIP'] },
+                            ];
+
+                            const missingIndicators = [
+                                'NÃO ENTREGUE', 'NAO ENTREGUE', 'PENDENTE', 'AUSÊNCIA', 'AUSENCIA',
+                                'OMISSA', 'OMISSÃO', 'OMISSAO', 'NÃO TRANSMITIDA', 'NAO TRANSMITIDA',
+                                'EM ATRASO', 'FALTA ENTREGA', 'NÃO APRESENTADA', 'NAO APRESENTADA',
+                                'INADIMPLENTE', 'SEM ENTREGA', 'FALTA DE ENTREGA'
+                            ];
+
+                            // Search in table rows for declarations
+                            const allElements = Array.from(document.querySelectorAll('table tr, td, span, div, li, p'));
+                            const seen = new Set<string>();
+
+                            allElements.forEach((el) => {
+                                const text = (el as HTMLElement).innerText?.trim().toUpperCase() || '';
+                                if (text.length < 3 || text.length > 500) return;
+
+                                for (const pattern of obligationPatterns) {
+                                    if (seen.has(pattern.name)) continue;
+                                    const hasObligation = pattern.keywords.some(kw => text.includes(kw));
+                                    if (!hasObligation) continue;
+
+                                    const isMissing = missingIndicators.some(ind => text.includes(ind));
+                                    if (isMissing) {
+                                        seen.add(pattern.name);
+                                        arr.push({
+                                            tipo: 'DECLARACAO_AUSENTE',
+                                            descricao: `Obrigação ${pattern.name} não entregue ou pendente: ${text.substring(0, 120)}`,
+                                            risco: "Alto",
+                                            valor: 0
+                                        });
+                                    }
+                                }
+                            });
+
+                            // =============================================
+                            // 3. FULL TEXT ANALYSIS (fallback for non-tabular data)
+                            // =============================================
+                            // Check for broad indicators of irregular status
+                            const irregularIndicators = [
+                                'IRREGULAR', 'POSSUI PENDÊNCIAS', 'POSSUI PENDENCIAS',
+                                'TEM PENDÊNCIAS', 'TEM PENDENCIAS', 'NÃO REGULAR',
+                                'NAO REGULAR', 'SITUAÇÃO IRREGULAR', 'SITUACAO IRREGULAR',
+                                'PENDÊNCIA FISCAL', 'PENDENCIA FISCAL'
+                            ];
+
+                            if (arr.length === 0 && irregularIndicators.some(ind => fullText.includes(ind))) {
+                                // Try to extract what type of irregularity
+                                for (const pattern of obligationPatterns) {
+                                    if (seen.has(pattern.name)) continue;
+                                    if (pattern.keywords.some(kw => fullText.includes(kw))) {
+                                        seen.add(pattern.name);
+                                        arr.push({
+                                            tipo: 'VERIFICACAO_MANUAL',
+                                            descricao: `Possível pendência em ${pattern.name} - verifique manualmente no portal e-CAC.`,
+                                            risco: "Médio",
+                                            valor: 0
+                                        });
+                                    }
+                                }
+
+                                // Generic fallback if nothing specific found
+                                if (arr.length === 0) {
                                     arr.push({
-                                        descricao: `Situação RFB: ${desc.substring(0, 70)}...`,
+                                        tipo: 'VERIFICACAO_MANUAL',
+                                        descricao: 'Contribuinte possui pendências na Receita Federal, mas os detalhes não puderam ser extraídos automaticamente. Acesse o e-CAC.',
                                         risco: "Alto",
-                                        valor: parseFloat(valStr)
-                                    });
-                                } else {
-                                    arr.push({
-                                        descricao: `Aviso/Suspenso RFB: ${desc.substring(0, 70)}...`,
-                                        risco: "Médio",
                                         valor: 0
                                     });
                                 }
-                            } else {
-                                arr.push({
-                                    descricao: `Aviso RFB: ${text.substring(0, 70)}...`,
-                                    risco: "Alto",
-                                    valor: 0
-                                });
                             }
-                        }
-                    });
 
-                    // Se não encontrou nada na tabela, mas a página diz que tem, cria um genérico
-                    if (arr.length === 0 && (document.body.innerText.toUpperCase().includes('POSSUI PENDÊNCIAS') || document.body.innerText.toUpperCase().includes('TEM PENDÊNCIAS'))) {
-                        arr.push({
-                            descricao: `Aviso RFB: Contribuinte possui pendências, mas não puderam ser extraídas automaticamente. Acesse o portal.`,
-                            risco: "Alto",
-                            valor: 0
-                        });
+                            return arr;
+                        }).catch(() => [] as any[]);
+
+                        realPendencies.push(...framePendencies);
+                    } catch (frameErr) {
+                        // Some frames may be cross-origin or detached, skip them
+                        continue;
                     }
+                }
 
-                    return arr;
-                });
-                realPendencies.push(...framePendencies);
+                // Deduplicate by description
+                const uniquePendencies = realPendencies.filter((p, i, self) =>
+                    i === self.findIndex(q => q.descricao === p.descricao)
+                );
 
-                if (realPendencies.length === 0) {
-                    console.log("[EcacService] Nenhuma pendência financeira encontrada nas tabelas extraídas.");
+                console.log(`[EcacService] Total de pendências encontradas: ${uniquePendencies.length}`);
+
+                // Log full page text for debugging when 0 results found
+                if (uniquePendencies.length === 0) {
+                    const pageText = await page.evaluate(() => document.body.innerText.substring(0, 2000));
+                    console.log("[EcacService] AVISO: Nenhuma pendência encontrada. Texto da página:", pageText);
                 }
 
                 return {
                     status: 'success',
-                    message: realPendencies.length > 0 ? 'Pendências Federais encontradas no e-CAC!' : 'Nenhuma pendência financeira visível no painel principal do e-CAC.',
+                    message: uniquePendencies.length > 0 ? 'Pendências Federais encontradas no e-CAC!' : 'Nenhuma pendência financeira visível no painel principal do e-CAC.',
                     screenshot: screenshotPath,
-                    pendencies: realPendencies
+                    pendencies: uniquePendencies
                 };
 
             } finally {
