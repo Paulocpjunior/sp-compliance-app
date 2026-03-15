@@ -12,6 +12,7 @@ export class EcacService {
 
         const sessionId = uuidv4();
         const pfxPath = path.join(os.tmpdir(), `cert-${sessionId}.pfx`);
+        let browser: any = null;
 
         try {
             // Write original cert to disk
@@ -43,7 +44,7 @@ export class EcacService {
                 // Fallback to original and pray
             }
 
-            const browser = await chromium.launch({
+            browser = await chromium.launch({
                 headless: true,
                 args: [
                     '--no-sandbox',
@@ -213,16 +214,18 @@ export class EcacService {
                 };
 
             } finally {
-                await browser.close().catch(() => { });
+                if (browser) await browser.close().catch(() => { });
+                browser = null;
             }
         } catch (error: any) {
-            console.error("\n[EcacService] 🔥 SCRAPING ERROR CAUGHT 🔥", error.stack || error);
-            // DO NOT return success with 0 pendencies if the scraper crashed. Throw so it flags as an error or is properly reported to UI.
+            console.error("\n[EcacService] SCRAPING ERROR CAUGHT", error.stack || error);
             throw new Error(`Erro na extração do e-CAC: ${error.message}`);
         } finally {
-            if (fs.existsSync(pfxPath)) fs.unlinkSync(pfxPath);
-            if (fs.existsSync(pfxPath + '.pem')) fs.unlinkSync(pfxPath + '.pem');
-            if (fs.existsSync(pfxPath + '.modern.pfx')) fs.unlinkSync(pfxPath + '.modern.pfx');
+            // Safety net: close browser if inner finally didn't run
+            if (browser) await browser.close().catch(() => { });
+            try { if (fs.existsSync(pfxPath)) fs.unlinkSync(pfxPath); } catch { /* ignore */ }
+            try { if (fs.existsSync(pfxPath + '.pem')) fs.unlinkSync(pfxPath + '.pem'); } catch { /* ignore */ }
+            try { if (fs.existsSync(pfxPath + '.modern.pfx')) fs.unlinkSync(pfxPath + '.modern.pfx'); } catch { /* ignore */ }
         }
     }
 }
