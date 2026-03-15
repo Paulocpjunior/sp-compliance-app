@@ -27,6 +27,7 @@ interface AuditData {
   declaracoesAusentes: number;
   entregasAtraso: number;
   valorTotalAberto: number;
+  debugInfo?: any;
 }
 
 type TabKey = 'dashboard' | 'pendencias' | 'cnds' | 'valores' | 'plano';
@@ -246,6 +247,11 @@ export default function App() {
       const entregasAtraso = pendencias.filter(p => classifyPendency(p) === 'atraso').length;
       const valorTotalAberto = pendencias.reduce((acc, p) => acc + (p.valor || 0), 0);
 
+      // Log debug info to console for diagnostics
+      if (data.debugInfo) {
+        console.log('[Auditoria Debug Info]', JSON.stringify(data.debugInfo, null, 2));
+      }
+
       setAuditData({
         status: data.status,
         clienteRegular: data.clienteRegular,
@@ -256,6 +262,7 @@ export default function App() {
         declaracoesAusentes,
         entregasAtraso,
         valorTotalAberto,
+        debugInfo: data.debugInfo || null,
       });
 
       setActiveTab('dashboard');
@@ -521,6 +528,54 @@ export default function App() {
                 );
               })}
             </div>
+
+            {/* Debug Panel - shows when 0 pendencies and debug info available */}
+            {auditData.pendencias.length === 0 && auditData.debugInfo && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                <h3 className="text-sm font-black text-amber-800 mb-3">Diagnostico da Varredura</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <div className="bg-white rounded-xl p-3 text-center">
+                    <p className="text-xs text-slate-500">e-CAC</p>
+                    <p className="text-lg font-bold text-slate-800">{auditData.debugInfo.scanResults?.ecac ?? '?'}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 text-center">
+                    <p className="text-xs text-slate-500">PGFN</p>
+                    <p className="text-lg font-bold text-slate-800">{auditData.debugInfo.scanResults?.pgfn ?? '?'}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 text-center">
+                    <p className="text-xs text-slate-500">e-Social</p>
+                    <p className="text-lg font-bold text-slate-800">{auditData.debugInfo.scanResults?.esocial ?? '?'}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 text-center">
+                    <p className="text-xs text-slate-500">Municipal</p>
+                    <p className="text-lg font-bold text-slate-800">{auditData.debugInfo.scanResults?.municipal ?? '?'}</p>
+                  </div>
+                </div>
+                {auditData.debugInfo.ecac && (
+                  <div className="space-y-2 text-xs text-amber-700">
+                    <p><span className="font-bold">URL final e-CAC:</span> {auditData.debugInfo.ecac.finalUrl || 'N/A'}</p>
+                    <p><span className="font-bold">Login:</span> {auditData.debugInfo.ecac.loginSuccess ? 'OK' : 'Falhou'}</p>
+                    <p><span className="font-bold">Frames:</span> {auditData.debugInfo.ecac.framesFound || 0}</p>
+                    {auditData.debugInfo.ecac.navigationAttempts?.length > 0 && (
+                      <div>
+                        <span className="font-bold">Navegacao:</span>
+                        <ul className="list-disc list-inside mt-1">
+                          {auditData.debugInfo.ecac.navigationAttempts.map((a: string, i: number) => (
+                            <li key={i}>{a}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {auditData.debugInfo.ecac.pageTextPreview && (
+                      <details className="mt-2">
+                        <summary className="cursor-pointer font-bold">Texto da pagina (preview)</summary>
+                        <pre className="mt-1 p-2 bg-white rounded text-[10px] whitespace-pre-wrap overflow-auto max-h-40">{auditData.debugInfo.ecac.pageTextPreview}</pre>
+                      </details>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Tab Content */}
             <div>

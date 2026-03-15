@@ -336,12 +336,22 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                .catch((err: any) => console.error("Email Async Error: ", err));
         }
 
-        // Final result
+        // Final result with debug info
         sendEvent('result', {
             status: 'success',
             clienteRegular: pendencias.length === 0,
             pendencias: pendencias,
-            certidoes: certidoes
+            certidoes: certidoes,
+            debugInfo: {
+                ecac: ecacResult?.debugInfo || null,
+                totalScans: 4,
+                scanResults: {
+                    ecac: pendenciasFederais.length,
+                    pgfn: pendenciasPGFN.length,
+                    esocial: pendenciasESocial.length,
+                    municipal: pendenciasMunicipais.length,
+                },
+            },
         });
 
     } catch (error: any) {
