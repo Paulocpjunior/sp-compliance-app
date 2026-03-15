@@ -42,15 +42,13 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
 const API_URL = import.meta.env.VITE_API_URL || 'https://api-sp-compliance-68935026677.southamerica-east1.run.app';
 
 const steps = [
-  { label: 'Validando certificado A1...', duration: 1500 },
-  { label: 'Conectando ao e-CAC (Receita Federal)...', duration: 3000 },
-  { label: 'Consultando PGFN (Divida Ativa da Uniao)...', duration: 2500 },
-  { label: 'Varrendo Prefeitura Municipal...', duration: 2000 },
-  { label: 'Consultando Fazenda Estadual (SEFAZ)...', duration: 2000 },
-  { label: 'Verificando eSocial / FGTS...', duration: 1500 },
-  { label: 'Emitindo certidoes (CNDs)...', duration: 2000 },
-  { label: 'Calculando nivel de risco...', duration: 1000 },
-  { label: 'Gerando plano de acao...', duration: 1000 },
+  { label: 'Validando certificado A1...' },
+  { label: 'Conectando ao e-CAC (Receita Federal)...' },
+  { label: 'Varredura federal concluída.' },
+  { label: 'Varrendo Prefeitura Municipal...' },
+  { label: 'Varredura municipal concluída.' },
+  { label: 'Emitindo certidoes (CNDs)...' },
+  { label: 'Calculando nivel de risco...' },
 ];
 
 function formatCNPJ(cnpj: string): string {
@@ -145,13 +143,7 @@ export default function App() {
         return;
       }
 
-      // Animate steps
-      for (let i = 0; i < steps.length; i++) {
-        setCurrentStep(i);
-        await new Promise(r => setTimeout(r, steps[i].duration));
-      }
-
-      // Step 2: Send to backend for government scanning
+      // Step 2: Send to backend for government scanning (progress via SSE)
       const formData = new FormData();
       formData.append('certificate', certificate);
       formData.append('password', password);
@@ -159,36 +151,67 @@ export default function App() {
         formData.append('cnpj', parsed.cnpj);
       }
 
-      // Fetch with retry logic for transient network failures
+      // SSE streaming fetch with retry logic
       const MAX_RETRIES = 2;
       let lastError: Error | null = null;
-      let response: Response | null = null;
+      let data: any = null;
 
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         if (attempt > 0) {
-          const delay = Math.pow(2, attempt) * 1000; // 2s, 4s
+          const delay = Math.pow(2, attempt) * 1000;
           await new Promise(r => setTimeout(r, delay));
         }
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 280000); // 280s (Cloud Run timeout is 300s)
+        const timeoutId = setTimeout(() => controller.abort(), 280000);
 
         try {
-          response = await fetch(`${API_URL}/api/v1/auditoria-completa`, {
+          const response = await fetch(`${API_URL}/api/v1/auditoria-completa`, {
             method: 'POST',
             body: formData,
             signal: controller.signal,
           });
           clearTimeout(timeoutId);
 
-          if (!response.ok) {
-            const errBody = await response.json().catch(() => null);
-            const detail = errBody?.details || errBody?.error || '';
-            throw new Error(detail || 'Erro na comunicacao com os orgaos fiscais. Verifique sua conexao e tente novamente.');
+          if (!response.ok || !response.body) {
+            throw new Error('Erro na comunicacao com os orgaos fiscais. Verifique sua conexao e tente novamente.');
+          }
+
+          // Read SSE stream
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            let currentEvent = '';
+            for (const line of lines) {
+              if (line.startsWith('event: ')) {
+                currentEvent = line.slice(7).trim();
+              } else if (line.startsWith('data: ')) {
+                const payload = JSON.parse(line.slice(6));
+                if (currentEvent === 'progress' && typeof payload.step === 'number') {
+                  setCurrentStep(payload.step);
+                } else if (currentEvent === 'result') {
+                  data = payload;
+                } else if (currentEvent === 'error') {
+                  throw new Error(payload.details || payload.error || 'Erro no servidor.');
+                }
+              }
+            }
+          }
+
+          if (!data) {
+            throw new Error('Servidor encerrou sem retornar resultado.');
           }
           break; // Success
         } catch (err: any) {
-          clearTimeout(timeoutId);
           lastError = err;
           const isNetworkError = err.name === 'TypeError' ||
             err.message?.includes('Failed to fetch') ||
@@ -203,11 +226,9 @@ export default function App() {
         }
       }
 
-      if (!response) {
+      if (!data) {
         throw lastError || new Error('Falha na conexao com o servidor.');
       }
-
-      const data = await response.json();
       const pendencias: FiscalIssue[] = data.pendencias || [];
 
       // Calculate risk score

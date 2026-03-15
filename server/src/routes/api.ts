@@ -123,34 +123,55 @@ router.post('/audit/municipal', upload.single('certificate'), async (req, res) =
 });
 
 router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, res) => {
+    // SSE headers to keep connection alive during long processing
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no', // Disable Nginx buffering
+    });
+
+    const sendEvent = (event: string, data: any) => {
+        res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    // Heartbeat every 15s to prevent proxy/LB idle timeout
+    const heartbeat = setInterval(() => {
+        res.write(': heartbeat\n\n');
+    }, 15000);
+
     try {
         if (!req.file || !req.body.password) {
-            return res.status(400).json({ error: 'Certificado e senha são obrigatórios.' });
+            sendEvent('error', { error: 'Certificado e senha são obrigatórios.' });
+            res.end();
+            clearInterval(heartbeat);
+            return;
         }
 
         const pfxBase64 = req.file.buffer.toString('base64');
         const password = req.body.password;
         const cnpj = req.body.cnpj || 'Não Informado';
 
-        // 1. Acesso aos órgãos federais e municipal SEQUENCIALMENTE
-        // (rodar em paralelo causa 2 instancias Chromium simultaneas e estoura a memoria do Cloud Run)
+        sendEvent('progress', { step: 0, label: 'Validando certificado...' });
+
         let ecacResult: any = null;
         let pendenciasFederais: any[] = [];
         let federalError = false;
         let pendenciasMunicipais: any[] = [];
         let certidaoMunicipal = null;
 
-        // Timeout wrapper to prevent Cloud Run 300s limit from killing the connection
         const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> =>
             Promise.race([
                 promise,
                 new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
             ]);
 
-        // Federal scan first
+        // Federal scan
+        sendEvent('progress', { step: 1, label: 'Conectando ao e-CAC (Receita Federal)...' });
         try {
             ecacResult = await withTimeout(scanRFB(pfxBase64, password), 180000, 'Varredura Federal');
             pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
+            sendEvent('progress', { step: 2, label: 'Varredura federal concluída.' });
         } catch (err: any) {
             console.error("Erro na varredura federal:", err.message);
             federalError = true;
@@ -160,15 +181,18 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                 descricao: `Comunicação com órgãos federais indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
                 riskLevel: 'High',
             }];
+            sendEvent('progress', { step: 2, label: 'Varredura federal com falha parcial.' });
         }
 
-        // Municipal scan after federal completes (sequential to avoid memory exhaustion)
+        // Municipal scan
+        sendEvent('progress', { step: 3, label: 'Varrendo Prefeitura Municipal...' });
         try {
             const municipalResult = await withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 60000, 'Varredura Municipal');
             pendenciasMunicipais = municipalResult.pendencias || [];
             if (municipalResult.certidao) {
                 certidaoMunicipal = municipalResult.certidao;
             }
+            sendEvent('progress', { step: 4, label: 'Varredura municipal concluída.' });
         } catch (err: any) {
             console.error("Erro na varredura municipal:", err.message);
             pendenciasMunicipais = [{
@@ -177,14 +201,14 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                 descricao: 'Varredura municipal indisponivel no momento. Verificar manualmente.',
                 riskLevel: 'Medium',
             }];
+            sendEvent('progress', { step: 4, label: 'Varredura municipal com falha parcial.' });
         }
 
-        // 3. Consolida todas as pendencias
         const pendencias = [...pendenciasFederais, ...pendenciasMunicipais];
-
         let certidoes: any[] = [];
 
-        // 4. Emissao Inteligente de CNDs
+        // CND emission
+        sendEvent('progress', { step: 5, label: 'Emitindo certidões (CNDs)...' });
         if (!federalError && pendenciasFederais.length === 0) {
             console.log(`CNPJ ${cnpj} limpo no federal. Tentando emitir CND Federal...`);
             try {
@@ -202,12 +226,10 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             }
         }
 
-        // Adiciona certidao municipal se emitida
         if (certidaoMunicipal) {
             certidoes.push(certidaoMunicipal);
         }
 
-        // Adiciona certidoes nao emitidas para visibilidade
         if (pendenciasFederais.length > 0) {
             certidoes.push({
                 orgao: 'Receita Federal / PGFN',
@@ -223,11 +245,13 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
             });
         }
 
+        sendEvent('progress', { step: 6, label: 'Calculando nível de risco...' });
+
         const statusCliente = pendencias.length === 0 ? 'REGULAR' : 'IRREGULAR';
         const orgaos = [...new Set(pendencias.map((p: any) => p.orgao))].join(', ');
         const razaoSocial = ecacResult?.razaoSocial || `Empresa ${cnpj}`;
 
-        // 5. Integracoes Assincronas (Planilhas + E-mail)
+        // Async integrations (Sheets + Email)
         GoogleSheetsService.logAuditResult({
             cnpj: cnpj,
             razaoSocial: razaoSocial,
@@ -242,8 +266,8 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                .catch(err => console.error("Email Async Error: ", err));
         }
 
-        // 6. Retorna para o Frontend
-        return res.json({
+        // Final result
+        sendEvent('result', {
             status: 'success',
             clienteRegular: pendencias.length === 0,
             pendencias: pendencias,
@@ -252,7 +276,10 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
 
     } catch (error: any) {
         console.error("Erro na auditoria-completa:", error);
-        return res.status(500).json({ error: 'Falha na comunicação com os órgãos governamentais.', details: error.message });
+        sendEvent('error', { error: 'Falha na comunicação com os órgãos governamentais.', details: error.message });
+    } finally {
+        clearInterval(heartbeat);
+        res.end();
     }
 });
 
