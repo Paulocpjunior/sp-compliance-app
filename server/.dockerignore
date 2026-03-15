@@ -1,6 +1,10 @@
 node_modules
+dist
+debug
 npm-debug.log
+*.log
 Dockerfile
 .dockerignore
 .git
 .gitignore
+.env
