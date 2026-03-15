@@ -1,0 +1,28 @@
+From d8fc208f151990be5a20ce2fe0108a18e21b6138 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Mar 2026 17:04:58 +0000
+Subject: [PATCH] fix: trigger CI/CD deploy on current default branch
+
+The repo has no 'main' branch - default is claude/fix-api-communication-error-EfR6w.
+Without this fix, pushes never trigger the deploy workflow.
+
+https://claude.ai/code/session_01JkY1R8XGLDV8DP5uJ5DKaz
+---
+ .github/workflows/deploy.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+index 142a694..2494589 100644
+--- a/.github/workflows/deploy.yml
++++ b/.github/workflows/deploy.yml
+@@ -4,6 +4,7 @@ on:
+   push:
+     branches:
+       - main
++      - claude/fix-api-communication-error-EfR6w
+ 
+ env:
+   PROJECT_ID: gen-lang-client-0569062468
+-- 
+2.43.0
+
