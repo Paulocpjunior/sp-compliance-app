@@ -42,8 +42,11 @@ export class CNDService {
                     '--disable-setuid-sandbox',
                     '--disable-dev-shm-usage',
                     '--disable-gpu',
+                    '--single-process',
+                    '--disable-extensions',
+                    '--disable-background-networking',
                     '--ignore-certificate-errors',
-                    `--client-certificate-file=${certPath}` // Injeta o certificado mTLS
+                    `--client-certificate-file=${certPath}`
                 ]
             });
 

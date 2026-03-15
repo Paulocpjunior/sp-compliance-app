@@ -36,7 +36,7 @@ export class GovBrService {
 
             const browser = await chromium.launch({
                 headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
+                args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process', '--disable-extensions', '--disable-background-networking', '--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
             });
 
             const context = await browser.newContext({
@@ -221,7 +221,7 @@ export class GovBrService {
 
             const browser = await chromium.launch({
                 headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
+                args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process', '--disable-extensions', '--disable-background-networking', '--window-size=1280,800', '--ignore-certificate-errors', '--disable-web-security']
             });
 
             const context = await browser.newContext({
