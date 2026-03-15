@@ -87,66 +87,167 @@ export class EcacService {
             page.setDefaultTimeout(60000);
 
             try {
-                // 1. Acesso pela porta da frente
-                // 1. Acesso direto (Bypass) ao Gateway SSO do Gov.Br
+                // 1. Acesso direto ao Gateway SSO do Gov.Br
                 console.log("[EcacService] Iniciando fluxo direto de Autenticação OAuth2 Gov.Br...");
                 await page.goto('https://sso.acesso.gov.br/authorize?response_type=code&client_id=cav.receita.fazenda.gov.br&scope=openid+govbr_confiabilidades&redirect_uri=https://cav.receita.fazenda.gov.br/autenticacao/login/LogarGovBr&state=Y2F2', { waitUntil: 'domcontentloaded' });
 
-                console.log("[EcacService] Aguardando tela do Gov.br...");
+                console.log("[EcacService] URL após goto SSO:", page.url());
 
                 // Wait for Gov.br page to load and display the certificate option
-                await page.waitForSelector('#login-certificate', { timeout: 15000 });
-                await page.click('#login-certificate');
-                console.log("[EcacService] Certificado submetido no e-CAC.");
+                // Try multiple selectors - Gov.br may have changed the UI
+                let certButtonFound = false;
+                const certSelectors = ['#login-certificate', 'button[data-test="login-certificate"]', 'a[href*="certificado"]', 'button:has-text("Certificado")', 'a:has-text("Certificado")'];
+
+                for (const selector of certSelectors) {
+                    try {
+                        await page.waitForSelector(selector, { timeout: 8000 });
+                        await page.click(selector);
+                        certButtonFound = true;
+                        console.log(`[EcacService] Botão de certificado encontrado com seletor: ${selector}`);
+                        break;
+                    } catch {
+                        continue;
+                    }
+                }
+
+                if (!certButtonFound) {
+                    // Log what's on the page for debugging
+                    const ssoText = await page.evaluate(() => document.body.innerText.substring(0, 1000));
+                    console.log("[EcacService] AVISO: Botão de certificado não encontrado. Texto da página SSO:", ssoText);
+                    console.log("[EcacService] URL atual:", page.url());
+
+                    // Maybe the page auto-redirected (cert was auto-selected by Playwright)
+                    if (page.url().includes('cav.receita.fazenda.gov.br')) {
+                        console.log("[EcacService] Parece que o certificado foi aceito automaticamente (auto-redirect).");
+                        certButtonFound = true;
+                    } else {
+                        throw new Error(`Botão de login por certificado não encontrado na página Gov.br. URL: ${page.url()}`);
+                    }
+                }
 
                 // Wait until e-CAC home finishes loading after redirect
                 console.log("[EcacService] Processando login, aguardando retorno ao portal...");
-                await page.waitForURL('**/cav.receita.fazenda.gov.br/**', { timeout: 35000, waitUntil: 'domcontentloaded' }).catch(() => { });
-                await new Promise(r => setTimeout(r, 4000));
-
                 if (!page.url().includes('cav.receita.fazenda.gov.br')) {
-                    const debugPath = path.join(__dirname, '..', '..', 'debug', `ecac-auth-fail-${uuidv4()}.png`);
-                    await page.screenshot({ path: debugPath, fullPage: true }).catch(console.error);
-                    throw new Error(`O Portal e-CAC rejeitou este Certificado Digital. Redirecionamento forçado para: ${page.url()}`);
+                    await page.waitForURL('**/cav.receita.fazenda.gov.br/**', { timeout: 45000, waitUntil: 'domcontentloaded' }).catch(() => { });
+                    await new Promise(r => setTimeout(r, 5000));
                 }
 
-                // 🚨 CRITICAL FIX: Check if e-CAC rejected the handshake
+                const currentUrl = page.url();
+                console.log("[EcacService] URL após login:", currentUrl);
+
+                if (!currentUrl.includes('cav.receita.fazenda.gov.br')) {
+                    const pageText = await page.evaluate(() => document.body.innerText.substring(0, 500));
+                    throw new Error(`Login no e-CAC falhou. URL final: ${currentUrl}. Conteúdo: ${pageText.substring(0, 200)}`);
+                }
+
+                // Check if e-CAC rejected the handshake
                 const bodyText = await page.evaluate(() => document.body.innerText.toUpperCase());
                 if (bodyText.includes('401') || bodyText.includes('UNAUTHORIZED') || bodyText.includes('NÃO AUTORIZADO') || bodyText.includes('ACESSO NEGADO')) {
                     throw new Error("O Portal e-CAC rejeitou este Certificado Digital (401 Não Autorizado / Acesso Negado).");
                 }
 
-                console.log("[EcacService] Login concluído. Navegando para Consultar de Situação...");
+                console.log("[EcacService] Login concluído. Navegando para Situação Fiscal...");
 
-                // HUMAN CLICK SIMULATION 
+                // Collect debug info
+                const debugInfo: any = {
+                    loginUrl: currentUrl,
+                    loginSuccess: true,
+                    navigationAttempts: [],
+                    finalUrl: '',
+                    pageTextPreview: '',
+                    framesFound: 0,
+                };
+
+                // Try multiple navigation strategies to reach Situação Fiscal
+                let reachedSitFis = false;
+
+                // Strategy 1: Direct URL to Situação Fiscal
                 try {
-                    await page.waitForSelector('#menuLocal', { timeout: 20000 });
-
-                    await page.evaluate(() => {
-                        const links = Array.from(document.querySelectorAll('a'));
-                        const certBtn = links.find(el => el.innerText.includes('Certidões e Situação Fiscal'));
-                        if (certBtn) (certBtn as HTMLElement).click();
-                    });
-
-                    await new Promise(r => setTimeout(r, 2000));
-
-                    await page.evaluate(() => {
-                        const links = Array.from(document.querySelectorAll('a'));
-                        const sitBtn = links.find(el => el.innerText.includes('Consulta Pendências - Situação Fiscal') || el.innerText.includes('Situação Fiscal'));
-                        if (sitBtn) (sitBtn as HTMLElement).click();
-                    });
-                } catch (e) {
-                    console.log("[EcacService] Falha na navegação via cliques, tentando link interno.");
-                    await page.goto('https://cav.receita.fazenda.gov.br/Servicos/ATSPO/SitFis.app/default.aspx', { waitUntil: 'load', timeout: 35000 }).catch(() => { });
+                    console.log("[EcacService] Tentativa 1: URL direta da Situação Fiscal...");
+                    await page.goto('https://cav.receita.fazenda.gov.br/Servicos/ATSPO/SitFis.app/default.aspx', { waitUntil: 'domcontentloaded', timeout: 30000 });
+                    await new Promise(r => setTimeout(r, 5000));
+                    const text = await page.evaluate(() => document.body.innerText.toUpperCase());
+                    if (text.includes('SITUAÇÃO FISCAL') || text.includes('SITUACAO FISCAL') || text.includes('PENDÊNCIA') || text.includes('PENDENCIA') || text.includes('TRIBUT')) {
+                        reachedSitFis = true;
+                        debugInfo.navigationAttempts.push('DIRETO_SITFIS: SUCESSO');
+                        console.log("[EcacService] Chegou na página de Situação Fiscal via URL direta.");
+                    } else {
+                        debugInfo.navigationAttempts.push('DIRETO_SITFIS: página não contém dados fiscais');
+                    }
+                } catch (e: any) {
+                    debugInfo.navigationAttempts.push(`DIRETO_SITFIS: ERRO - ${e.message}`);
                 }
 
-                await new Promise(r => setTimeout(r, 8000)); // wait for full load of iframes
+                // Strategy 2: Navigate via menu clicks
+                if (!reachedSitFis) {
+                    try {
+                        console.log("[EcacService] Tentativa 2: Navegação via menu...");
+                        await page.goto('https://cav.receita.fazenda.gov.br', { waitUntil: 'domcontentloaded', timeout: 20000 });
+                        await new Promise(r => setTimeout(r, 3000));
+
+                        await page.evaluate(() => {
+                            const links = Array.from(document.querySelectorAll('a'));
+                            const certBtn = links.find(el => el.innerText.includes('Certidões e Situação Fiscal') || el.innerText.includes('Situação Fiscal'));
+                            if (certBtn) (certBtn as HTMLElement).click();
+                        });
+                        await new Promise(r => setTimeout(r, 3000));
+
+                        await page.evaluate(() => {
+                            const links = Array.from(document.querySelectorAll('a'));
+                            const sitBtn = links.find(el =>
+                                el.innerText.includes('Consulta Pendências') ||
+                                el.innerText.includes('Situação Fiscal') ||
+                                el.innerText.includes('Pendências')
+                            );
+                            if (sitBtn) (sitBtn as HTMLElement).click();
+                        });
+                        await new Promise(r => setTimeout(r, 5000));
+
+                        const text = await page.evaluate(() => document.body.innerText.toUpperCase());
+                        if (text.includes('SITUAÇÃO FISCAL') || text.includes('PENDÊNCIA')) {
+                            reachedSitFis = true;
+                            debugInfo.navigationAttempts.push('MENU_CLICKS: SUCESSO');
+                        } else {
+                            debugInfo.navigationAttempts.push('MENU_CLICKS: página não contém dados fiscais');
+                        }
+                    } catch (e: any) {
+                        debugInfo.navigationAttempts.push(`MENU_CLICKS: ERRO - ${e.message}`);
+                    }
+                }
+
+                // Strategy 3: Try the old URL format
+                if (!reachedSitFis) {
+                    try {
+                        console.log("[EcacService] Tentativa 3: URL alternativa...");
+                        await page.goto('https://cav.receita.fazenda.gov.br/Servicos/ConsultaSitFiscal/ConsultaSitFiscal.aspx', { waitUntil: 'domcontentloaded', timeout: 30000 });
+                        await new Promise(r => setTimeout(r, 5000));
+                        const text = await page.evaluate(() => document.body.innerText.toUpperCase());
+                        if (text.length > 100) {
+                            reachedSitFis = true;
+                            debugInfo.navigationAttempts.push('URL_ALT: SUCESSO');
+                        } else {
+                            debugInfo.navigationAttempts.push('URL_ALT: página vazia ou erro');
+                        }
+                    } catch (e: any) {
+                        debugInfo.navigationAttempts.push(`URL_ALT: ERRO - ${e.message}`);
+                    }
+                }
+
+                debugInfo.finalUrl = page.url();
+
+                // Wait for dynamic content (iframes, AJAX)
+                await new Promise(r => setTimeout(r, 10000));
 
                 const debugDir = path.join(__dirname, '..', '..', 'debug');
                 if (!fs.existsSync(debugDir)) fs.mkdirSync(debugDir);
                 const screenshotPath = path.join(debugDir, `ecac-debug-${uuidv4()}.png`);
                 await page.screenshot({ path: screenshotPath, fullPage: true }).catch(console.error);
-                console.log("[EcacService] Screenshot de debug salvo em:", screenshotPath);
+
+                // Capture page text for debug
+                const mainPageText = await page.evaluate(() => document.body.innerText.substring(0, 3000));
+                debugInfo.pageTextPreview = mainPageText.substring(0, 1500);
+                console.log("[EcacService] URL final:", page.url());
+                console.log("[EcacService] Texto da página (preview):", mainPageText.substring(0, 500));
 
                 const realPendencies: any[] = [];
 
@@ -319,19 +420,15 @@ export class EcacService {
                     i === self.findIndex(q => q.descricao === p.descricao)
                 );
 
+                debugInfo.framesFound = allFrames.length;
                 console.log(`[EcacService] Total de pendências encontradas: ${uniquePendencies.length}`);
-
-                // Log full page text for debugging when 0 results found
-                if (uniquePendencies.length === 0) {
-                    const pageText = await page.evaluate(() => document.body.innerText.substring(0, 2000));
-                    console.log("[EcacService] AVISO: Nenhuma pendência encontrada. Texto da página:", pageText);
-                }
 
                 return {
                     status: 'success',
                     message: uniquePendencies.length > 0 ? 'Pendências Federais encontradas no e-CAC!' : 'Nenhuma pendência financeira visível no painel principal do e-CAC.',
                     screenshot: screenshotPath,
-                    pendencies: uniquePendencies
+                    pendencies: uniquePendencies,
+                    debugInfo,
                 };
 
             } finally {
