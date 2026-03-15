@@ -48,6 +48,70 @@ router.get('/status', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
+// Diagnostic endpoint - tests Chromium launch and OpenSSL (GET = browser test, POST = with file upload)
+router.get('/diagnostic', async (req, res) => {
+    const checks: Record<string, string> = {};
+
+    // 1. Check Chromium launch
+    try {
+        const { chromium } = require('playwright');
+        const browser = await chromium.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        });
+        const version = browser.version();
+        await browser.close();
+        checks['chromium'] = `OK (v${version})`;
+    } catch (e: any) {
+        checks['chromium'] = `FALHOU - ${e.message}`;
+    }
+
+    // 2. Check OpenSSL
+    try {
+        const { execSync } = require('child_process');
+        const ver = execSync('openssl version').toString().trim();
+        checks['openssl'] = `OK (${ver})`;
+    } catch (e: any) {
+        checks['openssl'] = `FALHOU - ${e.message}`;
+    }
+
+    // 3. Check memory
+    const mem = process.memoryUsage();
+    checks['memory_heap_mb'] = (mem.heapUsed / 1024 / 1024).toFixed(1);
+    checks['memory_rss_mb'] = (mem.rss / 1024 / 1024).toFixed(1);
+
+    return res.json({ diagnostic: checks });
+});
+
+router.post('/diagnostic', upload.single('certificate'), async (req, res) => {
+    const checks: Record<string, string> = {};
+    checks['upload'] = req.file ? `OK (${req.file.size} bytes)` : 'FALHOU - nenhum arquivo recebido';
+    checks['password'] = req.body.password ? 'OK' : 'FALHOU - senha não recebida';
+
+    try {
+        const { chromium } = require('playwright');
+        const browser = await chromium.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        });
+        const version = browser.version();
+        await browser.close();
+        checks['chromium'] = `OK (v${version})`;
+    } catch (e: any) {
+        checks['chromium'] = `FALHOU - ${e.message}`;
+    }
+
+    try {
+        const { execSync } = require('child_process');
+        const ver = execSync('openssl version').toString().trim();
+        checks['openssl'] = `OK (${ver})`;
+    } catch (e: any) {
+        checks['openssl'] = `FALHOU - ${e.message}`;
+    }
+
+    return res.json({ diagnostic: checks });
+});
+
 // Endpoint individual para varredura municipal
 router.post('/audit/municipal', upload.single('certificate'), async (req, res) => {
     try {
@@ -75,9 +139,16 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
         let pendenciasMunicipais: any[] = [];
         let certidaoMunicipal = null;
 
+        // Timeout wrapper to prevent Cloud Run 300s limit from killing the connection
+        const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> =>
+            Promise.race([
+                promise,
+                new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
+            ]);
+
         const [federalResult, municipalResult] = await Promise.allSettled([
-            scanRFB(pfxBase64, password),
-            MunicipalService.scanMunicipal(pfxBase64, password, cnpj)
+            withTimeout(scanRFB(pfxBase64, password), 240000, 'Varredura Federal'),
+            withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 240000, 'Varredura Municipal')
         ]);
 
         // Process federal result

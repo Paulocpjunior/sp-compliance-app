@@ -76,7 +76,9 @@ jobs:
             --region southamerica-east1 \
             --platform managed \
             --allow-unauthenticated \
-            --memory 2Gi \
+            --memory 4Gi \
             --cpu 2 \
             --timeout 300 \
+            --concurrency 4 \
+            --min-instances 1 \
             --set-env-vars "SMTP_HOST=${{ secrets.SMTP_HOST }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASS=${{ secrets.SMTP_PASS }},GOOGLE_SHEETS_ID=${{ secrets.GOOGLE_SHEETS_ID }},GOOGLE_CREDENTIALS_BASE64=${{ secrets.GOOGLE_CREDENTIALS_BASE64 }},TECHNICAL_TEAM_EMAIL=${{ secrets.TECHNICAL_TEAM_EMAIL }}"
