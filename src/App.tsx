@@ -10,6 +10,7 @@ import { ManualEntry, ManualPendencia } from './components/ManualEntry';
 import { ManualAnalysisDashboard } from './components/ManualAnalysisDashboard';
 import { RiskEngine } from './services/RiskEngine';
 import { analisarPendencias, gerarAnaliseIA, AnaliseCompleta } from './services/aiAnalysisService';
+import { FiscalChatConsultant } from './components/FiscalChatConsultant';
 import { ParsedCertificate } from './types';
 import { FiscalIssue } from './types/TaxParser';
 
@@ -731,6 +732,14 @@ export default function App() {
           SP Assessoria Contabil - Conexao M2M segura via certificado digital A1 ICP-Brasil
         </p>
       </footer>
+
+      {/* Fiscal AI Chat - available when analysis is loaded */}
+      {(manualAnalise || auditData) && (
+        <FiscalChatConsultant
+          analise={manualAnalise || null}
+          nomeEmpresa={manualEmpresa || certInfo?.subject.CN?.split(':')[0] || certInfo?.subject.O || 'Empresa'}
+        />
+      )}
     </div>
   );
 }
