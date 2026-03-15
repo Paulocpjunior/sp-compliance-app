@@ -51,7 +51,7 @@ export class CNDService {
 
             // 2. INTERCEPTADOR DE SEGURANÇA (Garante navegação apenas em sites confiáveis)
             await page.setRequestInterception(true);
-            page.on('request', (request) => {
+            page.on('request', (request: any) => {
                 if (!this.isTrustedSite(request.url())) {
                     console.warn(`[ALERTA DE SEGURANÇA] Bloqueando navegação para site não confiável: ${request.url()}`);
                     request.abort();
@@ -75,7 +75,7 @@ export class CNDService {
             // 4. Captura do PDF
             // Em vez de baixar para o disco do Cloud Run, lemos a resposta diretamente para a memória
             const [response] = await Promise.all([
-                page.waitForResponse(res => res.url().includes('EmiteCertidao') && res.status() === 200),
+                page.waitForResponse((res: any) => res.url().includes('EmiteCertidao') && res.status() === 200),
                 botaoEmitir.click()
             ]);
 
