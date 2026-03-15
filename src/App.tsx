@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList, FileCode2 } from 'lucide-react';
+import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList } from 'lucide-react';
 import { CertificateParser } from './services/certificateParser';
 import { ComplianceDashboard } from './components/ComplianceDashboard';
 import { PendencyDetails } from './components/PendencyDetails';
@@ -9,7 +9,6 @@ import { ActionPlan } from './components/ActionPlan';
 import { ManualEntry, ManualPendencia } from './components/ManualEntry';
 import { ManualAnalysisDashboard } from './components/ManualAnalysisDashboard';
 import { RiskEngine } from './services/RiskEngine';
-import { XmlCapturePanel } from './components/XmlCapturePanel';
 import { analisarPendencias, gerarAnaliseIA, AnaliseCompleta } from './services/aiAnalysisService';
 import { ParsedCertificate } from './types';
 import { FiscalIssue } from './types/TaxParser';
@@ -93,7 +92,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [currentStep, setCurrentStep] = useState(0);
   const [dragOver, setDragOver] = useState(false);
-  const [appMode, setAppMode] = useState<'home' | 'certificate' | 'manual' | 'xmlcapture'>('home');
+  const [appMode, setAppMode] = useState<'home' | 'certificate' | 'manual'>('home');
   const [manualAnalise, setManualAnalise] = useState<AnaliseCompleta | null>(null);
   const [manualEmpresa, setManualEmpresa] = useState('');
   const [manualCnpj, setManualCnpj] = useState('');
@@ -360,7 +359,7 @@ export default function App() {
               <p className="text-slate-500 mt-2">Escolha como deseja realizar o diagnostico fiscal.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Opção 1 - Certificado Digital */}
               <button
                 onClick={() => setAppMode('certificate')}
@@ -398,26 +397,6 @@ export default function App() {
                   <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">SELIC</span>
                   <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">Parcelamentos</span>
                   <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">Multas</span>
-                </div>
-              </button>
-
-              {/* Opção 3 - Captura de XML */}
-              <button
-                onClick={() => setAppMode('xmlcapture')}
-                className="bg-white p-8 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 hover:border-emerald-300 hover:shadow-emerald-100/50 transition-all text-left group"
-              >
-                <div className="bg-emerald-50 p-3 rounded-xl w-fit mb-4 group-hover:bg-emerald-100 transition-colors">
-                  <FileCode2 size={32} className="text-emerald-600" />
-                </div>
-                <h3 className="text-lg font-black text-slate-800 mb-2">Captura de XML</h3>
-                <p className="text-sm text-slate-500 mb-4">
-                  Capture XMLs de NF-e/NFC-e via SEFAZ com certificado digital A1 ou A3, com agendamento e exportacao E-fiscal.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold">SEFAZ</span>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold">NF-e</span>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold">E-fiscal</span>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold">SharePoint</span>
                 </div>
               </button>
             </div>
@@ -526,11 +505,6 @@ export default function App() {
             cnpj={manualCnpj}
             onVoltar={() => setManualAnalise(null)}
           />
-        )}
-
-        {/* XML Capture Screen */}
-        {appMode === 'xmlcapture' && (
-          <XmlCapturePanel onVoltar={() => setAppMode('home')} />
         )}
 
         {/* Loading / Progress Screen */}
