@@ -1,12 +1,10 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-
-puppeteer.use(StealthPlugin());
+import os from 'os';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CNDService {
-    // 1. LISTA BRANCA DE SITES CONFIÁVEIS (Anti-Phishing / Anti-Redirecionamento)
     private static TRUSTED_DOMAINS = [
         'cav.receita.fazenda.gov.br',
         'www3.cav.receita.fazenda.gov.br',
@@ -14,9 +12,6 @@ export class CNDService {
         'certidao.receita.fazenda.gov.br'
     ];
 
-    /**
-     * Valida se a URL pertence aos órgãos oficiais do governo
-     */
     private static isTrustedSite(url: string): boolean {
         try {
             const hostname = new URL(url).hostname;
@@ -26,16 +21,33 @@ export class CNDService {
         }
     }
 
-    /**
-     * Navega até o portal oficial, emite a CND e retorna o PDF em Base64
-     */
     static async emitFederal(pfxBase64: string, password: string): Promise<string | null> {
-        const certPath = path.join(process.cwd(), `temp_cert_${Date.now()}.pfx`);
+        const sessionId = uuidv4();
+        const certPath = path.join(os.tmpdir(), `cert-cnd-${sessionId}.pfx`);
         fs.writeFileSync(certPath, Buffer.from(pfxBase64, 'base64'));
+
+        let finalPfxPath = certPath;
+        try {
+            const pemPath = certPath + '.pem';
+            const modernPfxPath = certPath + '.modern.pfx';
+            const { execSync } = require('child_process');
+            try {
+                execSync(`openssl pkcs12 -legacy -in "${certPath}" -passin pass:"${password}" -nodes -out "${pemPath}"`, { timeout: 10000 });
+            } catch {
+                execSync(`openssl pkcs12 -in "${certPath}" -passin pass:"${password}" -nodes -out "${pemPath}"`, { timeout: 10000 });
+            }
+            execSync(`openssl pkcs12 -export -in "${pemPath}" -out "${modernPfxPath}" -passout pass:"${password}"`, { timeout: 10000 });
+            if (fs.existsSync(modernPfxPath) && fs.statSync(modernPfxPath).size > 0) {
+                finalPfxPath = modernPfxPath;
+            }
+            if (fs.existsSync(pemPath)) fs.unlinkSync(pemPath);
+        } catch {
+            console.warn('[CNDService] Aviso: Conversao do certificado falhou, usando original.');
+        }
 
         let browser: any = null;
         try {
-            browser = await puppeteer.launch({
+            browser = await chromium.launch({
                 headless: true,
                 args: [
                     '--no-sandbox',
@@ -46,62 +58,72 @@ export class CNDService {
                     '--disable-extensions',
                     '--disable-background-networking',
                     '--ignore-certificate-errors',
-                    `--client-certificate-file=${certPath}`
                 ]
             });
 
-            const page = await browser.newPage();
+            const context = await browser.newContext({
+                ignoreHTTPSErrors: true,
+                clientCertificates: [
+                    {
+                        origin: 'https://solucoes.receita.fazenda.gov.br',
+                        pfxPath: finalPfxPath,
+                        passphrase: password,
+                    },
+                    {
+                        origin: 'https://certidao.receita.fazenda.gov.br',
+                        pfxPath: finalPfxPath,
+                        passphrase: password,
+                    },
+                ]
+            });
 
-            // 2. INTERCEPTADOR DE SEGURANÇA (Garante navegação apenas em sites confiáveis)
-            await page.setRequestInterception(true);
-            page.on('request', (request: any) => {
-                if (!this.isTrustedSite(request.url())) {
-                    console.warn(`[ALERTA DE SEGURANÇA] Bloqueando navegação para site não confiável: ${request.url()}`);
-                    request.abort();
+            const page = await context.newPage();
+            page.setDefaultTimeout(30000);
+            page.setDefaultNavigationTimeout(30000);
+
+            // Block untrusted domains
+            await page.route('**/*', (route: any) => {
+                const url = route.request().url();
+                if (!this.isTrustedSite(url)) {
+                    console.warn(`[CNDService] Bloqueando navegacao para site nao confiavel: ${url}`);
+                    route.abort();
                 } else {
-                    request.continue();
+                    route.continue();
                 }
             });
 
-            // 3. Navegação Oficial (Bypass do Captcha)
-            console.log('Acessando emissor oficial de CNDs da Receita Federal...');
+            console.log('[CNDService] Acessando emissor oficial de CNDs da Receita Federal...');
             const emissorUrl = 'https://solucoes.receita.fazenda.gov.br/Servicos/certidao/CndConjuntaInter/InformaNICertidao.asp?Tipo=1';
+            await page.goto(emissorUrl, { waitUntil: 'domcontentloaded' });
 
-            await page.goto(emissorUrl, { waitUntil: 'networkidle2' });
-
-            // Clica no botão "Emitir" (O seletor exato depende do HTML da RFB, aqui usamos o padrão)
             const botaoEmitir = await page.$('input[name="Emitir"]');
             if (!botaoEmitir) {
-                throw new Error('Botão de emissão não encontrado no site oficial.');
+                throw new Error('Botao de emissao nao encontrado no site oficial.');
             }
 
-            // 4. Captura do PDF
-            // Em vez de baixar para o disco do Cloud Run, lemos a resposta diretamente para a memória
             const [response] = await Promise.all([
                 page.waitForResponse((res: any) => res.url().includes('EmiteCertidao') && res.status() === 200),
                 botaoEmitir.click()
             ]);
 
-            const buffer = await response.buffer();
-
-            // Verifica se o retorno é realmente um PDF (assinatura '%PDF')
+            const buffer = await response.body();
             if (buffer.toString('utf8', 0, 4) !== '%PDF') {
-                console.warn('O portal retornou uma página de erro em vez do PDF da certidão.');
+                console.warn('[CNDService] O portal retornou uma pagina de erro em vez do PDF da certidao.');
                 return null;
             }
 
-            // Converte o PDF para Base64 para ser enviado ao Frontend
             const base64Pdf = buffer.toString('base64');
-            console.log('CND emitida e capturada com sucesso.');
-
+            console.log('[CNDService] CND emitida e capturada com sucesso.');
             return base64Pdf;
 
         } catch (error: any) {
-            console.error('Falha na emissão da CND:', error.message);
+            console.error('[CNDService] Falha na emissao da CND:', error.message);
             return null;
         } finally {
             if (browser) await browser.close().catch(() => { });
-            try { if (fs.existsSync(certPath)) fs.unlinkSync(certPath); } catch { /* ignore */ }
+            try { if (fs.existsSync(certPath)) fs.unlinkSync(certPath); } catch { }
+            try { if (fs.existsSync(certPath + '.pem')) fs.unlinkSync(certPath + '.pem'); } catch { }
+            try { if (fs.existsSync(certPath + '.modern.pfx')) fs.unlinkSync(certPath + '.modern.pfx'); } catch { }
         }
     }
 }

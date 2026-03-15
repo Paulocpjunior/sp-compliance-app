@@ -166,43 +166,47 @@ router.post('/v1/auditoria-completa', upload.single('certificate'), async (req, 
                 new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`${label}: tempo limite excedido (${ms/1000}s)`)), ms))
             ]);
 
-        // Federal scan
-        sendEvent('progress', { step: 1, label: 'Conectando ao e-CAC (Receita Federal)...' });
-        try {
-            ecacResult = await withTimeout(scanRFB(pfxBase64, password), 180000, 'Varredura Federal');
-            pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
-            sendEvent('progress', { step: 2, label: 'Varredura federal concluída.' });
-        } catch (err: any) {
-            console.error("Erro na varredura federal:", err.message);
-            federalError = true;
-            pendenciasFederais = [{
-                orgao: 'Receita Federal / e-CAC',
-                tipo: 'VERIFICACAO_MANUAL',
-                descricao: `Comunicação com órgãos federais indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
-                riskLevel: 'High',
-            }];
-            sendEvent('progress', { step: 2, label: 'Varredura federal com falha parcial.' });
-        }
+        // Run federal and municipal scans IN PARALLEL to stay well under Cloud Run's 300s timeout
+        sendEvent('progress', { step: 1, label: 'Conectando ao e-CAC e Prefeitura Municipal (paralelo)...' });
 
-        // Municipal scan
-        sendEvent('progress', { step: 3, label: 'Varrendo Prefeitura Municipal...' });
-        try {
-            const municipalResult = await withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 60000, 'Varredura Municipal');
-            pendenciasMunicipais = municipalResult.pendencias || [];
-            if (municipalResult.certidao) {
-                certidaoMunicipal = municipalResult.certidao;
-            }
-            sendEvent('progress', { step: 4, label: 'Varredura municipal concluída.' });
-        } catch (err: any) {
-            console.error("Erro na varredura municipal:", err.message);
-            pendenciasMunicipais = [{
-                orgao: 'Prefeitura Municipal',
-                tipo: 'VERIFICACAO_MANUAL',
-                descricao: 'Varredura municipal indisponivel no momento. Verificar manualmente.',
-                riskLevel: 'Medium',
-            }];
-            sendEvent('progress', { step: 4, label: 'Varredura municipal com falha parcial.' });
-        }
+        const federalPromise = withTimeout(scanRFB(pfxBase64, password), 180000, 'Varredura Federal')
+            .then((result) => {
+                ecacResult = result;
+                pendenciasFederais = TaxParser.parseEcacDashboard(ecacResult);
+                sendEvent('progress', { step: 2, label: 'Varredura federal concluída.' });
+            })
+            .catch((err: any) => {
+                console.error("Erro na varredura federal:", err.message);
+                federalError = true;
+                pendenciasFederais = [{
+                    orgao: 'Receita Federal / e-CAC',
+                    tipo: 'VERIFICACAO_MANUAL',
+                    descricao: `Comunicação com órgãos federais indisponível: ${err.message || 'Erro desconhecido'}. Verificar manualmente.`,
+                    riskLevel: 'High',
+                }];
+                sendEvent('progress', { step: 2, label: 'Varredura federal com falha parcial.' });
+            });
+
+        const municipalPromise = withTimeout(MunicipalService.scanMunicipal(pfxBase64, password, cnpj), 120000, 'Varredura Municipal')
+            .then((municipalResult) => {
+                pendenciasMunicipais = municipalResult.pendencias || [];
+                if (municipalResult.certidao) {
+                    certidaoMunicipal = municipalResult.certidao;
+                }
+                sendEvent('progress', { step: 4, label: 'Varredura municipal concluída.' });
+            })
+            .catch((err: any) => {
+                console.error("Erro na varredura municipal:", err.message);
+                pendenciasMunicipais = [{
+                    orgao: 'Prefeitura Municipal',
+                    tipo: 'VERIFICACAO_MANUAL',
+                    descricao: 'Varredura municipal indisponivel no momento. Verificar manualmente.',
+                    riskLevel: 'Medium',
+                }];
+                sendEvent('progress', { step: 4, label: 'Varredura municipal com falha parcial.' });
+            });
+
+        await Promise.all([federalPromise, municipalPromise]);
 
         const pendencias = [...pendenciasFederais, ...pendenciasMunicipais];
         let certidoes: any[] = [];
