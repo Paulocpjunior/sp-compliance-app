@@ -5,7 +5,6 @@ import {
   Star, Info, Printer, Download, BarChart3, BookOpen, Gavel,
   ArrowRight, Calculator, Layers
 } from 'lucide-react';
-import { gerarRelatorioPDF } from '../services/pdfReportService';
 import { AnaliseCompleta, AnaliseItem, ParcelamentoSugestao } from '../services/aiAnalysisService';
 
 interface ManualAnalysisDashboardProps {
@@ -51,7 +50,6 @@ export function ManualAnalysisDashboard({ analise, nomeEmpresa, cnpj, onVoltar }
   ];
 
   const handlePrint = () => window.print();
-  const handleDownloadPDF = () => gerarRelatorioPDF(analise, nomeEmpresa, cnpj);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 print:space-y-4">
@@ -79,9 +77,6 @@ export function ManualAnalysisDashboard({ analise, nomeEmpresa, cnpj, onVoltar }
             </div>
 
             <div className="flex flex-col gap-1 print:hidden">
-              <button onClick={handleDownloadPDF} className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">
-                <Download size={12} /> Exportar PDF
-              </button>
               <button onClick={handlePrint} className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">
                 <Printer size={12} /> Imprimir
               </button>
