@@ -43,7 +43,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: 'plano', label: 'Plano de Acao', icon: Target },
 ];
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api-sp-compliance-68935026677.southamerica-east1.run.app';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const steps = [
   { label: 'Validando certificado A1...' },

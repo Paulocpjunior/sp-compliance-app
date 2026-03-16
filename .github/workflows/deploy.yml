@@ -28,7 +28,7 @@ jobs:
       - name: Build frontend
         run: npm run build
         env:
-          VITE_API_URL: https://api-sp-compliance-68935026677.southamerica-east1.run.app
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Authenticate to Google Cloud
@@ -61,19 +61,19 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker southamerica-east1-docker.pkg.dev
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
       - name: Build and push Docker image
         run: |
           cd server
-          docker build -t southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }} .
-          docker push southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }}
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy api-sp-compliance \
-            --image southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }} \
-            --region southamerica-east1 \
+          gcloud run deploy interface-sp-compliance \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/sp-compliance/api:${{ github.sha }} \
+            --region us-central1 \
             --platform managed \
             --allow-unauthenticated \
             --memory 4Gi \
