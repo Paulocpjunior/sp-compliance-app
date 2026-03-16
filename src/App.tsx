@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList } from 'lucide-react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList, WifiOff, Wifi } from 'lucide-react';
 import { CertificateParser } from './services/certificateParser';
 import { ComplianceDashboard } from './components/ComplianceDashboard';
 import { PendencyDetails } from './components/PendencyDetails';
@@ -97,6 +97,22 @@ export default function App() {
   const [manualEmpresa, setManualEmpresa] = useState('');
   const [manualCnpj, setManualCnpj] = useState('');
   const [manualLoading, setManualLoading] = useState(false);
+  const [apiOnline, setApiOnline] = useState<boolean | null>(null);
+
+  // Health check on mount and every 60s
+  useEffect(() => {
+    const checkApi = async () => {
+      try {
+        const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(8000) });
+        setApiOnline(res.ok);
+      } catch {
+        setApiOnline(false);
+      }
+    };
+    checkApi();
+    const interval = setInterval(checkApi, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -275,10 +291,11 @@ export default function App() {
 
       setActiveTab('dashboard');
     } catch (err: any) {
+      setApiOnline(false);
       if (err.name === 'AbortError') {
-        setError('A auditoria excedeu o tempo limite. O servidor pode estar sobrecarregado. Tente novamente em alguns minutos.');
+        setError('A auditoria excedeu o tempo limite. O servidor pode estar sobrecarregado. Tente novamente em alguns minutos ou utilize a Entrada Manual.');
       } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError') || err.message?.includes('network') || err.message?.includes('conexão') || err.message?.includes('perdida') || err.message?.includes('Load failed')) {
-        setError('Falha na conexao com o servidor. A conexao foi perdida durante a auditoria. Isso pode ocorrer quando o servidor esta processando muitas requisicoes. Tente novamente em alguns minutos.');
+        setError('Servidor de auditoria indisponivel. Utilize a opcao "Entrada Manual" no menu Inicio para analise com IA, calculo SELIC e plano de acao.');
       } else {
         setError(err.message || 'Erro inesperado durante a auditoria.');
       }
@@ -351,6 +368,19 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {/* API Status Banner */}
+      {apiOnline === false && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+            <WifiOff size={16} className="text-amber-600 shrink-0" />
+            <p className="text-sm text-amber-800 font-medium">
+              Servidor de auditoria indisponivel no momento. A varredura por certificado pode nao funcionar.
+              Utilize o <strong>modo Entrada Manual</strong> para analise com IA.
+            </p>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Home Screen - Choose mode */}
