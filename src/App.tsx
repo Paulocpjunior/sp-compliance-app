@@ -10,7 +10,6 @@ import { ManualEntry, ManualPendencia } from './components/ManualEntry';
 import { ManualAnalysisDashboard } from './components/ManualAnalysisDashboard';
 import { RiskEngine } from './services/RiskEngine';
 import { analisarPendencias, gerarAnaliseIA, AnaliseCompleta } from './services/aiAnalysisService';
-import { TaxReformNews } from './components/TaxReformNews';
 import { ParsedCertificate } from './types';
 import { FiscalIssue } from './types/TaxParser';
 
@@ -98,7 +97,6 @@ export default function App() {
   const [manualEmpresa, setManualEmpresa] = useState('');
   const [manualCnpj, setManualCnpj] = useState('');
   const [manualLoading, setManualLoading] = useState(false);
-  const [newsRefreshKey, setNewsRefreshKey] = useState(0);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -300,7 +298,6 @@ export default function App() {
     setManualEmpresa('');
     setManualCnpj('');
     setAppMode('home');
-    setNewsRefreshKey(k => k + 1);
   };
 
   const handleManualAnalyze = async (pendencias: ManualPendencia[], nomeEmpresa: string, cnpj: string) => {
@@ -404,8 +401,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* News Cards - Reforma Tributaria */}
-            <TaxReformNews refreshKey={newsRefreshKey} />
           </div>
         )}
 
