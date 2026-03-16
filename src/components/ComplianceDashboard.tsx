@@ -1,6 +1,5 @@
 import React from 'react';
 import { Shield, TrendingDown, TrendingUp, AlertTriangle, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { TaxReformNews } from './TaxReformNews';
 
 interface DashboardProps {
   score: number;
@@ -289,9 +288,6 @@ export function ComplianceDashboard({
           <RiskDistributionBar pendencias={pendencias} />
         </div>
       )}
-
-      {/* Tax Reform News */}
-      <TaxReformNews refreshKey={0} />
     </div>
   );
 }

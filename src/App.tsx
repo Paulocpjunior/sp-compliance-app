@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList } from 'lucide-react';
+import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList, Newspaper } from 'lucide-react';
 import { CertificateParser } from './services/certificateParser';
 import { ComplianceDashboard } from './components/ComplianceDashboard';
 import { PendencyDetails } from './components/PendencyDetails';
@@ -10,6 +10,7 @@ import { ManualEntry, ManualPendencia } from './components/ManualEntry';
 import { ManualAnalysisDashboard } from './components/ManualAnalysisDashboard';
 import { RiskEngine } from './services/RiskEngine';
 import { analisarPendencias, gerarAnaliseIA, AnaliseCompleta } from './services/aiAnalysisService';
+import { TaxReformNews } from './components/TaxReformNews';
 import { ParsedCertificate } from './types';
 import { FiscalIssue } from './types/TaxParser';
 
@@ -92,7 +93,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [currentStep, setCurrentStep] = useState(0);
   const [dragOver, setDragOver] = useState(false);
-  const [appMode, setAppMode] = useState<'home' | 'certificate' | 'manual'>('home');
+  const [appMode, setAppMode] = useState<'home' | 'certificate' | 'manual' | 'news'>('home');
   const [manualAnalise, setManualAnalise] = useState<AnaliseCompleta | null>(null);
   const [manualEmpresa, setManualEmpresa] = useState('');
   const [manualCnpj, setManualCnpj] = useState('');
@@ -342,11 +343,16 @@ export default function App() {
               <p className="text-xs text-slate-400 font-medium">Motor de Diagnostico Fiscal Automatizado</p>
             </div>
           </div>
-          {(auditData || appMode !== 'home') && (
-            <button onClick={handleReset} className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
-              <RotateCcw size={14} /> Inicio
+          <div className="flex items-center gap-2">
+            <button onClick={() => setAppMode('news')} className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-xl transition-colors ${appMode === 'news' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200'}`}>
+              <Newspaper size={14} /> Situacao Fiscal
             </button>
-          )}
+            {(auditData || appMode !== 'home') && (
+              <button onClick={handleReset} className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                <RotateCcw size={14} /> Inicio
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -506,6 +512,13 @@ export default function App() {
             cnpj={manualCnpj}
             onVoltar={() => setManualAnalise(null)}
           />
+        )}
+
+        {/* News Screen */}
+        {appMode === 'news' && (
+          <div className="max-w-4xl mx-auto">
+            <TaxReformNews refreshKey={0} />
+          </div>
         )}
 
         {/* Loading / Progress Screen */}
