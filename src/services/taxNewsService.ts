@@ -1,5 +1,6 @@
 export interface TaxNewsItem {
   title: string;
+  description: string;
   link: string;
   source: string;
   pubDate: string;
@@ -37,6 +38,12 @@ function extractSource(title: string): { cleanTitle: string; source: string } {
   return { cleanTitle: title, source: 'Google News' };
 }
 
+function cleanHtml(html: string): string {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+}
+
 async function fetchWithProxy(proxyFn: (url: string) => string): Promise<TaxNewsItem[]> {
   const response = await fetch(proxyFn(GOOGLE_NEWS_RSS), {
     signal: AbortSignal.timeout(6000),
@@ -58,9 +65,12 @@ async function fetchWithProxy(proxyFn: (url: string) => string): Promise<TaxNews
     const { cleanTitle, source } = extractSource(rawTitle);
     const link = item.querySelector('link')?.textContent || '#';
     const pubDate = item.querySelector('pubDate')?.textContent || '';
+    const rawDesc = item.querySelector('description')?.textContent || '';
+    const description = cleanHtml(rawDesc).slice(0, 200);
 
     news.push({
       title: cleanTitle,
+      description: description || cleanTitle,
       link,
       source,
       pubDate,
@@ -87,21 +97,24 @@ export async function fetchTaxReformNews(limit = 6): Promise<TaxNewsItem[]> {
 function getFallbackNews(): TaxNewsItem[] {
   return [
     {
-      title: 'IBS e CBS entram em vigor: periodo de teste comeca em 2026 com aliquotas reduzidas',
+      title: 'IBS e CBS entram em vigor com aliquotas de teste em 2026',
+      description: 'A partir de 2026 comeca o periodo de teste: CBS (federal) e IBS (estados/municipios) passam a coexistir com os tributos atuais. Aliquota-teste de 0,1% para CBS e 0,05% para IBS.',
       link: 'https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria',
       source: 'Gov.br',
       pubDate: new Date().toISOString(),
       relativeTime: 'Vigência 2026',
     },
     {
-      title: 'Split payment obrigatorio: como funciona o novo sistema de recolhimento automatico',
+      title: 'Split payment obrigatorio: recolhimento automatico na liquidacao financeira',
+      description: 'O novo mecanismo de split payment divide automaticamente o valor do tributo no momento do pagamento, reduzindo a sonegacao e simplificando o recolhimento para empresas.',
       link: 'https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria',
       source: 'Ministério da Fazenda',
       pubDate: new Date().toISOString(),
       relativeTime: 'Vigência 2026',
     },
     {
-      title: 'Cashback tributario: familias de baixa renda terao devolucao de CBS e IBS',
+      title: 'Cashback tributario beneficia familias de baixa renda com devolucao de CBS e IBS',
+      description: 'Programa de cashback prevê a devolução de parte dos tributos pagos por familias inscritas no CadUnico, especialmente em itens essenciais como alimentos, energia e gas.',
       link: 'https://www.camara.leg.br',
       source: 'Câmara dos Deputados',
       pubDate: new Date().toISOString(),
@@ -109,6 +122,7 @@ function getFallbackNews(): TaxNewsItem[] {
     },
     {
       title: 'Comite Gestor do IBS: regulamentacao define estrutura e competencias',
+      description: 'O Comite Gestor sera responsavel pela arrecadacao, fiscalizacao e distribuicao do IBS entre estados e municipios, substituindo ICMS e ISS de forma unificada.',
       link: 'https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria',
       source: 'Gov.br',
       pubDate: new Date().toISOString(),
@@ -116,13 +130,15 @@ function getFallbackNews(): TaxNewsItem[] {
     },
     {
       title: 'Imposto Seletivo: lista de produtos com tributacao extra e definida',
+      description: 'O Imposto Seletivo incidira sobre produtos prejudiciais a saude e ao meio ambiente, como bebidas alcoolicas, cigarros, bebidas acucaradas e veiculos poluentes.',
       link: 'https://www.planalto.gov.br',
       source: 'Planalto',
       pubDate: new Date().toISOString(),
       relativeTime: 'Vigência 2026',
     },
     {
-      title: 'Transicao tributaria 2026-2033: cronograma completo para empresas se adaptarem',
+      title: 'Transicao tributaria 2026-2033: cronograma completo para empresas',
+      description: 'A transicao sera gradual: 2026 fase de teste, 2027-2028 coexistencia com aliquotas crescentes, 2029-2032 extincao progressiva dos tributos antigos, 2033 novo sistema pleno.',
       link: 'https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria',
       source: 'Receita Federal',
       pubDate: new Date().toISOString(),
