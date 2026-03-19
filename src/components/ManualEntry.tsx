@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Plus, Trash2, FileText, Upload, AlertTriangle, DollarSign,
-  Calendar, Building2, ClipboardList, X, ChevronDown, Save, Paperclip
+  Calendar, Building2, ClipboardList, X, ChevronDown, Save, Paperclip, RotateCcw
 } from 'lucide-react';
+
+const DRAFT_KEY = 'consultor_fiscal_manual_draft';
 
 export interface ManualPendencia {
   id: string;
@@ -66,6 +68,36 @@ const emptyItem = (): ManualPendencia => ({
 
 export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
   const [nomeEmpresa, setNomeEmpresa] = useState('');
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const { nomeEmpresa: ne, cnpj: cn, items: it } = JSON.parse(saved);
+        if (ne) setNomeEmpresa(ne);
+        if (cn) setCnpj(cn);
+        if (it && Array.isArray(it) && it.length > 0) {
+          // Restaura sem o File (não serializável), mantendo o nome do anexo
+          setItems(it.map((i: any) => ({ ...i, anexo: undefined })));
+        }
+      }
+    } catch { /* ignora erro de parse */ }
+  }, []);
+
+  // Salvar rascunho automaticamente a cada alteração
+  useEffect(() => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ nomeEmpresa, cnpj, items }));
+    } catch { /* ignora erro de storage */ }
+  }, [nomeEmpresa, cnpj, items]);
+
+  const handleLimparRascunho = () => {
+    if (!confirm('Limpar todo o rascunho salvo?')) return;
+    localStorage.removeItem(DRAFT_KEY);
+    setNomeEmpresa('');
+    setCnpj('');
+    setItems([emptyItem()]);
+    setExpandedIdx(0);
+  };
   const [cnpj, setCnpj] = useState('');
   const [items, setItems] = useState<ManualPendencia[]>([emptyItem()]);
   const [expandedIdx, setExpandedIdx] = useState<number>(0);
@@ -418,3 +450,72 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
     </div>
   );
 }
+// SUBSTITUA o bloco de Actions inteiro:
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          onClick={addItem}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors border border-indigo-200"
+        >
+          <Plus size={16} /> Adicionar Pendencia
+        </button>
+
+        <div className="flex-1" />
+
+        <p className="text-xs text-slate-400">
+          {items.length} {items.length === 1 ? 'item' : 'itens'} cadastrado{items.length > 1 ? 's' : ''}
+        </p>
+
+        <button
+          onClick={handleSubmit}
+          disabled={!isValid || loading}
+          className="flex items-center gap-2 px-6 py-3 text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <><span className="animate-spin">⟳</span> Analisando...</>
+          ) : (
+            <><AlertTriangle size={16} /> Analisar com IA</>
+          )}
+        </button>
+      </div>
+
+// POR:
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          onClick={addItem}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors border border-indigo-200"
+        >
+          <Plus size={16} /> Adicionar Pendencia
+        </button>
+
+        <button
+          onClick={handleLimparRascunho}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-xl transition-colors border border-slate-200 hover:border-red-200"
+          title="Limpar rascunho salvo"
+        >
+          <RotateCcw size={16} /> Limpar Rascunho
+        </button>
+
+        <div className="flex-1" />
+
+        <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+          <Save size={12} /> Salvo automaticamente
+        </div>
+
+        <p className="text-xs text-slate-400">
+          {items.length} {items.length === 1 ? 'item' : 'itens'} cadastrado{items.length > 1 ? 's' : ''}
+        </p>
+
+        <button
+          onClick={handleSubmit}
+          disabled={!isValid || loading}
+          className="flex items-center gap-2 px-6 py-3 text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <><span className="animate-spin">⟳</span> Analisando...</>
+          ) : (
+            <><AlertTriangle size={16} /> Analisar com IA</>
+          )}
+        </button>
+      </div>
