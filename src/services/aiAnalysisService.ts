@@ -90,7 +90,40 @@ function classificarCategoria(item: ManualPendencia): AnaliseItem['categoria'] {
 
   return 'debito';
 }
+// ADICIONE ANTES DE: export function analisarPendencias(...)
 
+function determinarTiposDebitoRelevantes(pendencias: ManualPendencia[]): Set<string> {
+  const tipos = new Set<string>();
+  pendencias.forEach(p => {
+    const orgao = (p.orgao || '').toUpperCase();
+    const tipo  = (p.tipo  || '').toUpperCase();
+
+    if (orgao.includes('RECEITA FEDERAL') || orgao.includes('RFB') ||
+        orgao.includes('ESOCIAL') || orgao.includes('INSS')) {
+      tipos.add('Federal');
+    }
+    if (orgao.includes('PGFN') || tipo.includes('DIVIDA ATIVA') || tipo.includes('DÍVIDA ATIVA')) {
+      tipos.add('PGFN');
+      tipos.add('Dívida Ativa');
+    }
+    if (tipo.includes('SIMPLES NACIONAL') || tipo.includes('DAS') || tipo.includes('RELP')) {
+      tipos.add('Simples Nacional');
+    }
+    if (orgao.includes('FGTS') || orgao.includes('CEF') || tipo.includes('FGTS')) {
+      tipos.add('FGTS');
+    }
+    if (orgao.includes('PREFEITURA') || tipo.includes('ISS') ||
+        tipo.includes('ISSQN') || tipo.includes('PPI')) {
+      tipos.add('Municipal');
+      tipos.add('ISS');
+    }
+  });
+  // Se nenhum tipo identificado, libera todos (fallback seguro)
+  if (tipos.size === 0) {
+    ['Federal','PGFN','Simples Nacional','FGTS','Municipal','ISS','Dívida Ativa'].forEach(t => tipos.add(t));
+  }
+  return tipos;
+}
 export function analisarPendencias(pendencias: ManualPendencia[]): Omit<AnaliseCompleta, 'planoAcao' | 'resumoIA'> {
   const itens: AnaliseItem[] = [];
   let totalOriginal = 0;
