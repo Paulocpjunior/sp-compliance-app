@@ -90,6 +90,9 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
     } catch { /* ignora erro de storage */ }
   }, [nomeEmpresa, cnpj, items]);
 
+  const [cnpj, setCnpj] = useState('');
+  const [items, setItems] = useState<ManualPendencia[]>([emptyItem()]);
+
   const handleLimparRascunho = () => {
     if (!confirm('Limpar todo o rascunho salvo?')) return;
     localStorage.removeItem(DRAFT_KEY);
@@ -98,8 +101,6 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
     setItems([emptyItem()]);
     setExpandedIdx(0);
   };
-  const [cnpj, setCnpj] = useState('');
-  const [items, setItems] = useState<ManualPendencia[]>([emptyItem()]);
   const [expandedIdx, setExpandedIdx] = useState<number>(0);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -429,66 +430,6 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
           <Plus size={16} /> Adicionar Pendencia
         </button>
 
-        <div className="flex-1" />
-
-        <p className="text-xs text-slate-400">
-          {items.length} {items.length === 1 ? 'item' : 'itens'} cadastrado{items.length > 1 ? 's' : ''}
-        </p>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!isValid || loading}
-          className="flex items-center gap-2 px-6 py-3 text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <><span className="animate-spin">⟳</span> Analisando...</>
-          ) : (
-            <><AlertTriangle size={16} /> Analisar com IA</>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-// SUBSTITUA o bloco de Actions inteiro:
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <button
-          onClick={addItem}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors border border-indigo-200"
-        >
-          <Plus size={16} /> Adicionar Pendencia
-        </button>
-
-        <div className="flex-1" />
-
-        <p className="text-xs text-slate-400">
-          {items.length} {items.length === 1 ? 'item' : 'itens'} cadastrado{items.length > 1 ? 's' : ''}
-        </p>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!isValid || loading}
-          className="flex items-center gap-2 px-6 py-3 text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <><span className="animate-spin">⟳</span> Analisando...</>
-          ) : (
-            <><AlertTriangle size={16} /> Analisar com IA</>
-          )}
-        </button>
-      </div>
-
-// POR:
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <button
-          onClick={addItem}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors border border-indigo-200"
-        >
-          <Plus size={16} /> Adicionar Pendencia
-        </button>
-
         <button
           onClick={handleLimparRascunho}
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-xl transition-colors border border-slate-200 hover:border-red-200"
@@ -519,3 +460,6 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
           )}
         </button>
       </div>
+    </div>
+  );
+}
