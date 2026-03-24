@@ -68,6 +68,8 @@ const emptyItem = (): ManualPendencia => ({
 
 export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
   const [nomeEmpresa, setNomeEmpresa] = useState('');
+  const [cnpj, setCnpj] = useState('');
+  const [items, setItems] = useState<ManualPendencia[]>([emptyItem()]);
   useEffect(() => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
@@ -90,8 +92,6 @@ export function ManualEntry({ onAnalyze, loading }: ManualEntryProps) {
     } catch { /* ignora erro de storage */ }
   }, [nomeEmpresa, cnpj, items]);
 
-  const [cnpj, setCnpj] = useState('');
-  const [items, setItems] = useState<ManualPendencia[]>([emptyItem()]);
 
   const handleLimparRascunho = () => {
     if (!confirm('Limpar todo o rascunho salvo?')) return;

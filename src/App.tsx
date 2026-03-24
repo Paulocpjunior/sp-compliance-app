@@ -1,19 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList, WifiOff, Wifi, FolderOpen, Trash2, Clock } from 'lucide-react';
-
-const SAVED_ANALYSES_KEY = 'sp_compliance_saved_analyses';
-
-interface SavedAnalysis {
-  id: string;
-  nomeEmpresa: string;
-  cnpj: string;
-  savedAt: string;
-  nivelRisco: string;
-  score: number;
-  totalItens: number;
-  totalValor: number;
-  analise: any;
-}
+import { Upload, FileKey, Loader2, Shield, Building2, ChevronRight, BarChart3, FileText, AlertTriangle, Target, DollarSign, RotateCcw, ClipboardList, WifiOff, Wifi } from 'lucide-react';
 import { CertificateParser } from './services/certificateParser';
 import { ComplianceDashboard } from './components/ComplianceDashboard';
 import { PendencyDetails } from './components/PendencyDetails';
@@ -112,32 +98,6 @@ export default function App() {
   const [manualCnpj, setManualCnpj] = useState('');
   const [manualLoading, setManualLoading] = useState(false);
   const [apiOnline, setApiOnline] = useState<boolean | null>(null);
-  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
-
-  // Load saved analyses on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(SAVED_ANALYSES_KEY);
-      if (raw) setSavedAnalyses(JSON.parse(raw));
-    } catch { /* ignore */ }
-  }, []);
-
-  const persistSavedAnalyses = (list: SavedAnalysis[]) => {
-    try { localStorage.setItem(SAVED_ANALYSES_KEY, JSON.stringify(list)); } catch { /* ignore */ }
-    setSavedAnalyses(list);
-  };
-
-  const deleteSavedAnalysis = (id: string) => {
-    if (!confirm('Remover esta análise salva?')) return;
-    persistSavedAnalyses(savedAnalyses.filter((a: SavedAnalysis) => a.id !== id));
-  };
-
-  const loadSavedAnalysis = (saved: SavedAnalysis) => {
-    setManualAnalise(saved.analise);
-    setManualEmpresa(saved.nomeEmpresa);
-    setManualCnpj(saved.cnpj);
-    setAppMode('manual');
-  };
 
   // Health check on mount and every 60s
   useEffect(() => {
@@ -373,27 +333,11 @@ export default function App() {
       const analiseBase = analisarPendencias(pendenciasFormatted);
       const { planoAcao, resumoIA } = await gerarAnaliseIA(analiseBase, nomeEmpresa);
 
-      const analiseCompleta = {
+      setManualAnalise({
         ...analiseBase,
         planoAcao,
         resumoIA,
-      };
-
-      setManualAnalise(analiseCompleta);
-
-      // Auto-save to persistent storage
-      const newSaved: SavedAnalysis = {
-        id: crypto.randomUUID(),
-        nomeEmpresa,
-        cnpj,
-        savedAt: new Date().toISOString(),
-        nivelRisco: analiseCompleta.nivelRisco,
-        score: analiseCompleta.score,
-        totalItens: analiseCompleta.itens.length,
-        totalValor: analiseCompleta.totalAtualizado,
-        analise: analiseCompleta,
-      };
-      persistSavedAnalyses([newSaved, ...savedAnalyses]);
+      });
     } catch (err: any) {
       setError(err.message || 'Erro ao analisar pendencias.');
     } finally {
@@ -489,72 +433,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* Análises Salvas */}
-            {savedAnalyses.length > 0 && (
-              <div className="mt-10">
-                <div className="flex items-center gap-2 mb-4">
-                  <FolderOpen size={18} className="text-slate-500" />
-                  <h3 className="text-base font-black text-slate-700">Analises Salvas</h3>
-                  <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">{savedAnalyses.length}</span>
-                </div>
-                <div className="space-y-3">
-                  {savedAnalyses.map((saved) => {
-                    const riskColors: Record<string, string> = {
-                      Low: 'bg-green-100 text-green-700',
-                      Medium: 'bg-yellow-100 text-yellow-700',
-                      High: 'bg-orange-100 text-orange-700',
-                      Critical: 'bg-red-100 text-red-700',
-                    };
-                    const riskLabels: Record<string, string> = { Low: 'BAIXO', Medium: 'MEDIO', High: 'ALTO', Critical: 'CRITICO' };
-                    return (
-                      <div key={saved.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div className="bg-slate-100 p-2.5 rounded-xl shrink-0">
-                            <Building2 size={20} className="text-slate-500" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-black text-slate-800 truncate">{saved.nomeEmpresa}</p>
-                            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5 flex-wrap">
-                              {saved.cnpj && <span>{saved.cnpj}</span>}
-                              <span className="flex items-center gap-1">
-                                <Clock size={10} />
-                                {new Date(saved.savedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <div className="text-right hidden sm:block">
-                            <p className="text-xs text-slate-400">Itens</p>
-                            <p className="text-sm font-black text-slate-700">{saved.totalItens}</p>
-                          </div>
-                          <div className="text-right hidden sm:block">
-                            <p className="text-xs text-slate-400">Total</p>
-                            <p className="text-sm font-black text-red-600">R$ {saved.totalValor.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-                          </div>
-                          <span className={`px-2 py-1 rounded-full text-[10px] font-black ${riskColors[saved.nivelRisco] || 'bg-slate-100 text-slate-500'}`}>
-                            {riskLabels[saved.nivelRisco] || saved.nivelRisco}
-                          </span>
-                          <button
-                            onClick={() => loadSavedAnalysis(saved)}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition-colors"
-                          >
-                            <FolderOpen size={12} /> Abrir
-                          </button>
-                          <button
-                            onClick={() => deleteSavedAnalysis(saved.id)}
-                            className="p-2 text-slate-300 hover:text-red-500 transition-colors"
-                            title="Remover análise"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          </div>
         )}
 
         {/* Certificate Upload Screen */}

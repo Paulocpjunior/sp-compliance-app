@@ -90,21 +90,7 @@ function classificarCategoria(item: ManualPendencia): AnaliseItem['categoria'] {
 
   return 'debito';
 }
-// Sugestões de parcelamento — filtradas pelo tipo de débito da empresa
-  const tiposRelevantes = determinarTiposDebitoRelevantes(pendencias);
-  const parcelamentosAplicaveis = PARCELAMENTOS_VIGENTES.filter(
-    p => p.vigente && p.tiposDebito.some(t => tiposRelevantes.has(t))
-  );
-  const sugestoesParcelamento: ParcelamentoSugestao[] = [];
-  if (totalAtualizado > 0) {
-    let menorParcela = Infinity;
-    parcelamentosAplicaveis.forEach(parc => {
-  // Se nenhum tipo identificado, libera todos (fallback seguro)
-  if (tipos.size === 0) {
-    ['Federal','PGFN','Simples Nacional','FGTS','Municipal','ISS','Dívida Ativa'].forEach(t => tipos.add(t));
-  }
-  return tipos;
-}
+
 export function analisarPendencias(pendencias: ManualPendencia[]): Omit<AnaliseCompleta, 'planoAcao' | 'resumoIA'> {
   const itens: AnaliseItem[] = [];
   let totalOriginal = 0;
