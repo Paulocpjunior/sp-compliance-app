@@ -1,3 +1,4 @@
+import '../styles/print.css';
 import React, { useState } from 'react';
 import {
   Shield, AlertTriangle, CheckCircle, XCircle, Clock, DollarSign,
